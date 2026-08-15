@@ -1,0 +1,23 @@
+{
+  "name": "clariq-app",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "build": "echo 'No build step required'",
+    "lint": "tsc --noEmit",
+    "start": "node server.ts"
+  },
+  "dependencies": {
+    "@google/genai": "latest",
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.11.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "typescript": "^5.4.5"
+  }
+}

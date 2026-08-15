@@ -1,0 +1,11 @@
+{
+  "name": "WAWW Remix  CLARIQ APP",
+  "description": "AI-Powered Digital Growth Platform for courses, live classes, assignments, and community.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
