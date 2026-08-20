@@ -1527,7 +1527,7 @@
           <label class="remember"><input type="checkbox" checked> Remember me</label>
           <button class="link-btn" onclick="showForgot()">Forgot password?</button>
         </div>
-        <button class="btn btn-primary" onclick="doLogin()">Login</button>
+        <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Login</button>
         <button class="btn btn-google" onclick="doGoogleSignIn()" style="margin-top:10px;">
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.46c-.28 1.5-1.13 2.77-2.4 3.62v3.01h3.88c2.27-2.09 3.58-5.17 3.58-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.91l-3.88-3.01c-1.08.72-2.45 1.15-4.06 1.15-3.13 0-5.78-2.11-6.73-4.95H1.27v3.11C3.24 21.3 7.29 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.28V6.61H1.27A11.98 11.98 0 0 0 0 12c0 1.93.46 3.76 1.27 5.39l4-3.11z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.29 0 3.24 2.7 1.27 6.61l4 3.11C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
           Continue with Google
@@ -1561,7 +1561,7 @@
           <div class="password-wrap"><input type="password" id="admin-signup-code" placeholder="Enter setup code"><button type="button" class="password-toggle" onclick="togglePasswordVisibility('admin-signup-code', this)" aria-label="Show password"><svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
         </div>
         <div id="admin-signup-error" class="field-error" style="display:none;"></div>
-        <button class="btn btn-primary" onclick="doAdminSignup()">Create Admin Account</button>
+        <button class="btn btn-primary" id="btn-admin-signup" onclick="doAdminSignup()">Create Admin Account</button>
         <button class="link-btn" style="margin-top:14px;" onclick="switchAuthTab('login')">Back to login</button>
       </div>
 
@@ -1594,7 +1594,7 @@
           <div class="password-wrap"><input type="password" id="signup-confirm" placeholder="Re-enter password"><button type="button" class="password-toggle" onclick="togglePasswordVisibility('signup-confirm', this)" aria-label="Show password"><svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
         </div>
         <div id="signup-error" class="field-error" style="display:none;"></div>
-        <button class="btn btn-primary" onclick="doSignup()">Create Account</button>
+        <button class="btn btn-primary" id="btn-signup" onclick="doSignup()">Create Account</button>
         <button class="btn btn-google" onclick="doGoogleSignIn()" style="margin-top:10px;">
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.46c-.28 1.5-1.13 2.77-2.4 3.62v3.01h3.88c2.27-2.09 3.58-5.17 3.58-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.91l-3.88-3.01c-1.08.72-2.45 1.15-4.06 1.15-3.13 0-5.78-2.11-6.73-4.95H1.27v3.11C3.24 21.3 7.29 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.28V6.61H1.27A11.98 11.98 0 0 0 0 12c0 1.93.46 3.76 1.27 5.39l4-3.11z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.29 0 3.24 2.7 1.27 6.61l4 3.11C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
           Continue with Google
@@ -1611,7 +1611,7 @@
           <input type="email" id="forgot-email" placeholder="you@example.com">
         </div>
         <div id="forgot-error" class="field-error" style="display:none;"></div>
-        <button class="btn btn-primary" onclick="doResetPassword()">Send Reset Link</button>
+        <button class="btn btn-primary" id="btn-reset-password" onclick="doResetPassword()">Send Reset Link</button>
         <button class="link-btn" style="margin-top:14px;" onclick="switchAuthTab('login')">Back to login</button>
       </div>
 
@@ -4658,12 +4658,27 @@ const FIREBASE_READY = FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
 let fbAuth = null;
 let fbDb = null;
 
-if(FIREBASE_READY && typeof firebase !== 'undefined'){
-  firebase.initializeApp(FIREBASE_CONFIG);
-  fbAuth = firebase.auth();
-  fbDb = firebase.firestore();
-  fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+function ensureFirebaseInitialized() {
+  if (FIREBASE_READY && typeof firebase !== 'undefined') {
+    try {
+      if (!firebase.apps || !firebase.apps.length) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      if (!fbAuth) {
+        fbAuth = firebase.auth();
+        fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(err => {
+          console.warn('[CLARIQ Auth] Persistence warning:', err);
+        });
+      }
+      if (!fbDb) {
+        fbDb = firebase.firestore();
+      }
+    } catch(err) {
+      console.error('[CLARIQ Firebase Init Error]:', err);
+    }
+  }
 }
+ensureFirebaseInitialized();
 
 /* ---------------- storage helpers (Firestore + LocalStorage Fallback) ---------------- */
 function firestoreSafeKey(key){
@@ -4780,11 +4795,20 @@ async function dbSet(key, value, shared){
   }catch(e){}
 }
 
-function friendlyAuthError(e){
+function friendlyAuthError(e, context = 'Auth'){
   if(!e) return 'An error occurred. Please try again.';
   const code = e.code || '';
   const msg = e.message || String(e);
   const currentHost = (typeof window !== 'undefined' && window.location && window.location.hostname) ? window.location.hostname : 'this domain';
+  const isOffline = (typeof navigator !== 'undefined' && navigator.onLine === false);
+
+  // Diagnostic logging for developers and debugging
+  console.error(`[CLARIQ Auth Diagnostics] Context: ${context} | Code: ${code} | Message: ${msg} | Host: ${currentHost} | Online: ${!isOffline}`, e);
+
+  if (isOffline) {
+    return 'Your device is currently offline. Please check your internet connection and try again.';
+  }
+
   const map = {
     'auth/email-already-in-use': 'An account with this email already exists.',
     'auth/invalid-email': 'Enter a valid email address.',
@@ -4799,7 +4823,7 @@ function friendlyAuthError(e){
     'auth/popup-blocked': 'Pop-up was blocked by your browser. Please allow pop-ups for this site.',
     'auth/unauthorized-domain': `Google Sign-In is not allowed for ${currentHost}. Add '${currentHost}' under Firebase Console -> Authentication -> Settings -> Authorized Domains.`,
     'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase Authentication.',
-    'auth/network-request-failed': 'Network request failed (auth/network-request-failed). Please check your internet connection or browser settings.',
+    'auth/network-request-failed': `Network request to Firebase failed (${code || 'auth/network-request-failed'}). This can happen due to a temporary network drop, slow connection, or an adblocker/firewall blocking Google Identity services. Please try again.`,
     'auth/expired-action-code': 'This password reset link has expired. Please request a new reset link.',
     'auth/invalid-action-code': 'This password reset link is invalid or has already been used. Please request a new reset link.',
   };
@@ -5001,7 +5025,10 @@ async function addToUserIndex(email){
   }
 }
 
+let isAuthSubmitting = false;
+
 async function doSignup(){
+  if (isAuthSubmitting) return;
   const name = document.getElementById('signup-name').value.trim();
   const email = document.getElementById('signup-email').value.trim().toLowerCase();
   const phone = document.getElementById('signup-phone') ? document.getElementById('signup-phone').value.trim() : '';
@@ -5017,9 +5044,29 @@ async function doSignup(){
   if(pass !== confirm){ showFieldError('signup-error','Passwords do not match.'); return; }
   if(!FIREBASE_READY){ showFieldError('signup-error','Firebase isn\'t configured yet, see FIREBASE_CONFIG at the top of the script.'); return; }
 
+  ensureFirebaseInitialized();
+  if(!fbAuth){ showFieldError('signup-error','Firebase Authentication is not ready. Please refresh the page.'); return; }
+
   showFieldError('signup-error','');
+  const btn = document.getElementById('btn-signup');
+  const originalText = btn ? btn.textContent : 'Create Account';
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating account...'; }
+  isAuthSubmitting = true;
+
   try{
-    await fbAuth.createUserWithEmailAndPassword(email, pass);
+    let cred;
+    try {
+      cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
+    } catch(err) {
+      if (err.code === 'auth/network-request-failed') {
+        console.warn('[CLARIQ Auth] Network failed on signup. Retrying once after 1000ms...');
+        await new Promise(r => setTimeout(r, 1000));
+        cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
+      } else {
+        throw err;
+      }
+    }
+
     const newUser = {
       name,
       email,
@@ -5033,30 +5080,64 @@ async function doSignup(){
     await loginAs(email, newUser);
     toast(`Welcome to CLARIQ, ${name}! 🎉`);
   }catch(e){
-    showFieldError('signup-error', friendlyAuthError(e));
+    console.error('[CLARIQ Signup Error]', e);
+    showFieldError('signup-error', friendlyAuthError(e, 'Signup'));
+  } finally {
+    isAuthSubmitting = false;
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
   }
 }
 
 async function doLogin(){
+  if (isAuthSubmitting) return;
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const pass = document.getElementById('login-password').value;
   if(!email || !pass){ showFieldError('login-error','Enter your email and password.'); return; }
   if(!FIREBASE_READY){ showFieldError('login-error','Firebase isn\'t configured yet, see FIREBASE_CONFIG at the top of the script.'); return; }
 
+  ensureFirebaseInitialized();
+  if(!fbAuth){ showFieldError('login-error','Firebase Authentication is not ready. Please refresh the page.'); return; }
+
+  showFieldError('login-error','');
+  const btn = document.getElementById('btn-login');
+  const originalText = btn ? btn.textContent : 'Login';
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
+  isAuthSubmitting = true;
+
   try{
-    await fbAuth.signInWithEmailAndPassword(email, pass);
-    showFieldError('login-error','');
+    let cred;
+    try {
+      cred = await fbAuth.signInWithEmailAndPassword(email, pass);
+    } catch(err) {
+      if (err.code === 'auth/network-request-failed') {
+        console.warn('[CLARIQ Auth] Network request failed on signIn. Retrying once after 1000ms...');
+        await new Promise(r => setTimeout(r, 1000));
+        cred = await fbAuth.signInWithEmailAndPassword(email, pass);
+      } else {
+        throw err;
+      }
+    }
+
     const user = await dbGet('users:' + email, true);
     await loginAs(email, user);
   }catch(e){
-    showFieldError('login-error', friendlyAuthError(e));
+    console.error('[CLARIQ Login Error]', e);
+    showFieldError('login-error', friendlyAuthError(e, 'Login'));
+  } finally {
+    isAuthSubmitting = false;
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
   }
 }
 
 let pendingGoogleUser = null;
 
 async function doGoogleSignIn(){
+  if (isAuthSubmitting) return;
   if(!FIREBASE_READY){ toast('Firebase isn\'t configured yet, see FIREBASE_CONFIG at the top of the script.'); return; }
+  ensureFirebaseInitialized();
+  if(!fbAuth){ toast('Firebase Authentication is not ready.'); return; }
+
+  isAuthSubmitting = true;
   try{
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
@@ -5100,11 +5181,13 @@ async function doGoogleSignIn(){
   }catch(e){
     console.error('Google Sign In Error:', e);
     if(e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
-      const errMsg = friendlyAuthError(e);
+      const errMsg = friendlyAuthError(e, 'GoogleSignIn');
       showFieldError('login-error', errMsg);
       showFieldError('signup-error', errMsg);
       toast(errMsg);
     }
+  } finally {
+    isAuthSubmitting = false;
   }
 }
 
@@ -5152,19 +5235,37 @@ async function submitGoogleCompletion() {
 }
 
 async function doResetPassword(){
+  if (isAuthSubmitting) return;
   const email = document.getElementById('forgot-email').value.trim().toLowerCase();
   if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     showFieldError('forgot-error','Valid email address is required.');
     return;
   }
+  ensureFirebaseInitialized();
   if(!FIREBASE_READY || !fbAuth){
     showFieldError('forgot-error','Firebase Authentication is not configured.');
     return;
   }
   
   showFieldError('forgot-error','');
+  const btn = document.getElementById('btn-reset-password');
+  const originalText = btn ? btn.textContent : 'Send Reset Link';
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending link...'; }
+  isAuthSubmitting = true;
+
   try{
-    await fbAuth.sendPasswordResetEmail(email);
+    try {
+      await fbAuth.sendPasswordResetEmail(email);
+    } catch(err) {
+      if (err.code === 'auth/network-request-failed') {
+        console.warn('[CLARIQ Auth] Network failed on password reset. Retrying once after 1000ms...');
+        await new Promise(r => setTimeout(r, 1000));
+        await fbAuth.sendPasswordResetEmail(email);
+      } else {
+        throw err;
+      }
+    }
+
     const errEl = document.getElementById('forgot-error');
     if (errEl) {
       errEl.style.color = '#15803d';
@@ -5175,13 +5276,17 @@ async function doResetPassword(){
     }
     toast('Password reset link sent to ' + email);
   }catch(e){
+    console.error('[CLARIQ Reset Password Error]', e);
     const errEl = document.getElementById('forgot-error');
     if (errEl) {
       errEl.style.color = '';
       errEl.style.background = '';
       errEl.style.borderColor = '';
     }
-    showFieldError('forgot-error', friendlyAuthError(e));
+    showFieldError('forgot-error', friendlyAuthError(e, 'ResetPassword'));
+  } finally {
+    isAuthSubmitting = false;
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
   }
 }
 
@@ -5214,7 +5319,7 @@ async function checkPasswordResetAction(){
       } catch (err) {
         console.error('Verify password reset code error:', err);
         if (subEl) subEl.textContent = 'Invalid or Expired Reset Link';
-        showFieldError('reset-password-error', friendlyAuthError(err));
+        showFieldError('reset-password-error', friendlyAuthError(err, 'VerifyResetCode'));
         const btn = document.getElementById('btn-save-new-password');
         if (btn) btn.disabled = true;
       }
@@ -5227,6 +5332,7 @@ async function checkPasswordResetAction(){
 }
 
 async function doConfirmResetPassword(){
+  if (isAuthSubmitting) return;
   const newPass = document.getElementById('reset-new-password').value;
   const confirmPass = document.getElementById('reset-confirm-password').value;
 
@@ -5245,10 +5351,23 @@ async function doConfirmResetPassword(){
 
   showFieldError('reset-password-error', '');
   const btn = document.getElementById('btn-save-new-password');
-  if (btn) btn.disabled = true;
+  const originalText = btn ? btn.textContent : 'Save New Password';
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  isAuthSubmitting = true;
 
   try {
-    await fbAuth.confirmPasswordReset(pendingResetOobCode, newPass);
+    try {
+      await fbAuth.confirmPasswordReset(pendingResetOobCode, newPass);
+    } catch(err) {
+      if (err.code === 'auth/network-request-failed') {
+        console.warn('[CLARIQ Auth] Network failed on confirm password reset. Retrying once after 1000ms...');
+        await new Promise(r => setTimeout(r, 1000));
+        await fbAuth.confirmPasswordReset(pendingResetOobCode, newPass);
+      } else {
+        throw err;
+      }
+    }
+
     toast('Password successfully changed! Please log in with your new password.');
     
     // Clear URL query parameters
@@ -5267,16 +5386,23 @@ async function doConfirmResetPassword(){
     switchAuthTab('login');
   } catch (e) {
     console.error('Confirm password reset error:', e);
-    showFieldError('reset-password-error', friendlyAuthError(e));
+    showFieldError('reset-password-error', friendlyAuthError(e, 'ConfirmResetPassword'));
   } finally {
-    if (btn) btn.disabled = false;
+    isAuthSubmitting = false;
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
   }
 }
 
 async function useDemoAccount(){
+  if (isAuthSubmitting) return;
   if(!FIREBASE_READY){ toast('Firebase isn\'t configured yet, see FIREBASE_CONFIG at the top of the script.'); return; }
+  ensureFirebaseInitialized();
+  if(!fbAuth){ toast('Firebase Authentication is not ready.'); return; }
+
   const demoEmail = 'demo@clariq.app';
   const demoPass = 'demo123456';
+  isAuthSubmitting = true;
+
   try{
     try{
       await fbAuth.signInWithEmailAndPassword(demoEmail, demoPass);
@@ -5304,14 +5430,23 @@ async function useDemoAccount(){
     }
     await loginAs(demoEmail, user);
   }catch(e){
-    toast(friendlyAuthError(e));
+    console.error('[CLARIQ Demo Login Error]', e);
+    toast(friendlyAuthError(e, 'DemoLogin'));
+  } finally {
+    isAuthSubmitting = false;
   }
 }
 
 async function useDemoAdminAccount(){
+  if (isAuthSubmitting) return;
   if(!FIREBASE_READY){ toast('Firebase isn\'t configured yet, see FIREBASE_CONFIG at the top of the script.'); return; }
+  ensureFirebaseInitialized();
+  if(!fbAuth){ toast('Firebase Authentication is not ready.'); return; }
+
   const demoEmail = 'admin@clariq.app';
   const demoPass = 'admin123456';
+  isAuthSubmitting = true;
+
   try{
     try{
       await fbAuth.signInWithEmailAndPassword(demoEmail, demoPass);
@@ -5335,11 +5470,15 @@ async function useDemoAdminAccount(){
     toast('Accessing Administrator Dashboard...');
     await loginAs(demoEmail, user);
   }catch(e){
-    toast(friendlyAuthError(e));
+    console.error('[CLARIQ Demo Admin Error]', e);
+    toast(friendlyAuthError(e, 'DemoAdminLogin'));
+  } finally {
+    isAuthSubmitting = false;
   }
 }
 
 async function doAdminSignup(){
+  if (isAuthSubmitting) return;
   const name = document.getElementById('admin-signup-name').value.trim();
   const email = document.getElementById('admin-signup-email').value.trim().toLowerCase();
   const pass = document.getElementById('admin-signup-password').value;
@@ -5352,15 +5491,39 @@ async function doAdminSignup(){
   if(pass !== confirm){ showFieldError('admin-signup-error','Passwords do not match.'); return; }
   if(!FIREBASE_READY){ showFieldError('admin-signup-error','Firebase isn\'t configured yet, see FIREBASE_CONFIG at the top of the script.'); return; }
 
+  ensureFirebaseInitialized();
+  if(!fbAuth){ showFieldError('admin-signup-error','Firebase Authentication is not ready. Please refresh the page.'); return; }
+
   showFieldError('admin-signup-error','');
+  const btn = document.getElementById('btn-admin-signup');
+  const originalText = btn ? btn.textContent : 'Create Admin Account';
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating admin account...'; }
+  isAuthSubmitting = true;
+
   try{
-    await fbAuth.createUserWithEmailAndPassword(email, pass);
+    let cred;
+    try {
+      cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
+    } catch(err) {
+      if (err.code === 'auth/network-request-failed') {
+        console.warn('[CLARIQ Auth] Network failed on admin signup. Retrying once after 1000ms...');
+        await new Promise(r => setTimeout(r, 1000));
+        cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
+      } else {
+        throw err;
+      }
+    }
+
     const newAdmin = {name, email, role:'admin', createdAt: new Date().toISOString()};
     await dbSet('users:' + email, newAdmin, true);
     await addToUserIndex(email);
     await loginAs(email, newAdmin);
   }catch(e){
-    showFieldError('admin-signup-error', friendlyAuthError(e));
+    console.error('[CLARIQ Admin Signup Error]', e);
+    showFieldError('admin-signup-error', friendlyAuthError(e, 'AdminSignup'));
+  } finally {
+    isAuthSubmitting = false;
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
   }
 }
 
@@ -5436,8 +5599,16 @@ async function updateStreak(email){
 }
 
 /* ---------------- app boot ---------------- */
+let bootHasRun = false;
+let authListenerUnsubscribe = null;
+
 async function boot(){
-  if(!FIREBASE_READY || typeof firebase === 'undefined'){
+  if (bootHasRun) return;
+  bootHasRun = true;
+
+  ensureFirebaseInitialized();
+
+  if(!FIREBASE_READY || !fbAuth){
     document.getElementById('auth-screen').style.display = 'grid';
     showFirebaseSetupBanner();
     hideLoadingScreen();
@@ -5450,53 +5621,63 @@ async function boot(){
     hideLoadingScreen();
   }
 
-  fbAuth.onAuthStateChanged(async (fbUser) => {
-    if(fbUser && fbUser.email){
-      const email = fbUser.email.toLowerCase();
-      let user = await dbGet('users:' + email, true);
-      if(!user){
-        user = {
-          name: fbUser.displayName || email.split('@')[0],
-          email: email,
-          phone: '',
-          role: 'student',
-          createdAt: new Date().toISOString()
-        };
-        await dbSet('users:' + email, user, true);
-        await addToUserIndex(email);
-      }
-      if(user){
-        currentUser = user;
-        currentSettings = await loadSettingsForUser(email);
-        currentNotifications = (await dbGet('notifications:' + email, true)) || [];
-        customCourses = (await dbGet('custom-courses', true)) || [];
-        announcements = (await dbGet('announcements', true)) || [];
-        supportTickets = (await dbGet('support-tickets', true)) || [];
-        videoResources = (await dbGet('video-resources', true)) || [];
-        courseReviews = (await dbGet('course-reviews', true)) || {};
-        lessonComments = (await dbGet('lesson-comments', true)) || {};
-        liveClassSchedule = (await dbGet('live-class-schedule', true)) || defaultLiveClassSchedule();
+  if (typeof authListenerUnsubscribe === 'function') {
+    authListenerUnsubscribe();
+  }
 
-        if(user.role === 'admin'){
-          showAdminApp();
+  authListenerUnsubscribe = fbAuth.onAuthStateChanged(async (fbUser) => {
+    try {
+      if(fbUser && fbUser.email){
+        const email = fbUser.email.toLowerCase();
+        let user = await dbGet('users:' + email, true);
+        if(!user){
+          user = {
+            name: fbUser.displayName || email.split('@')[0],
+            email: email,
+            phone: '',
+            role: 'student',
+            createdAt: new Date().toISOString()
+          };
+          await dbSet('users:' + email, user, true);
+          await addToUserIndex(email);
+        }
+        if(user){
+          currentUser = user;
+          currentSettings = await loadSettingsForUser(email);
+          currentNotifications = (await dbGet('notifications:' + email, true)) || [];
+          customCourses = (await dbGet('custom-courses', true)) || [];
+          announcements = (await dbGet('announcements', true)) || [];
+          supportTickets = (await dbGet('support-tickets', true)) || [];
+          videoResources = (await dbGet('video-resources', true)) || [];
+          courseReviews = (await dbGet('course-reviews', true)) || {};
+          lessonComments = (await dbGet('lesson-comments', true)) || {};
+          liveClassSchedule = (await dbGet('live-class-schedule', true)) || defaultLiveClassSchedule();
+
+          if(user.role === 'admin'){
+            showAdminApp();
+            hideLoadingScreen();
+            return;
+          }
+
+          await updateStreak(email);
+          currentProgress = (await dbGet('progress:' + email, true)) || {};
+          currentAssignments = (await dbGet('assignments:' + email, true)) || {};
+          chatHistory = (await dbGet('chat:' + email, true)) || [];
+          currentPortfolio = (await dbGet('portfolio:' + email, true)) || [];
+          currentCertificates = (await dbGet('certificates:' + email, true)) || {};
+          currentAttendance = (await dbGet('attendance:' + email, true)) || {};
+          showApp();
           hideLoadingScreen();
           return;
         }
-
-        await updateStreak(email);
-        currentProgress = (await dbGet('progress:' + email, true)) || {};
-        currentAssignments = (await dbGet('assignments:' + email, true)) || {};
-        chatHistory = (await dbGet('chat:' + email, true)) || [];
-        currentPortfolio = (await dbGet('portfolio:' + email, true)) || [];
-        currentCertificates = (await dbGet('certificates:' + email, true)) || {};
-        currentAttendance = (await dbGet('attendance:' + email, true)) || {};
-        showApp();
-        hideLoadingScreen();
-        return;
       }
+      document.getElementById('auth-screen').style.display = 'grid';
+      hideLoadingScreen();
+    } catch(err) {
+      console.error('[CLARIQ AuthState Error]', err);
+      document.getElementById('auth-screen').style.display = 'grid';
+      hideLoadingScreen();
     }
-    document.getElementById('auth-screen').style.display = 'grid';
-    hideLoadingScreen();
   });
 }
 
