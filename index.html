@@ -606,9 +606,18 @@
   .xp-pill:hover { transform:scale(1.03); }
   body.dark .xp-pill { background:rgba(59,130,246,0.2); color:#93c5fd; border-color:rgba(59,130,246,0.4); }
   .kbd-badge { font-size:10px; opacity:0.6; background:rgba(0,0,0,0.08); padding:1px 5px; border-radius:4px; font-family:monospace; }
-  .presence-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; flex-shrink:0; }
-  .presence-dot.online { background:#22c55e; box-shadow:0 0 6px rgba(34,197,94,0.6); }
+  .presence-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:4px; flex-shrink:0; vertical-align:middle; }
+  .presence-dot.online { background:#22c55e; box-shadow:0 0 0 0 rgba(34,197,94,0.7); animation:presence-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
   .presence-dot.offline { background:#94a3b8; }
+  @keyframes presence-pulse {
+    0% { transform:scale(0.95); box-shadow:0 0 0 0 rgba(34,197,94,0.7); }
+    70% { transform:scale(1); box-shadow:0 0 0 6px rgba(34,197,94,0); }
+    100% { transform:scale(0.95); box-shadow:0 0 0 0 rgba(34,197,94,0); }
+  }
+  .active-peer-card { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-radius:14px; background:#ffffff; border:1px solid var(--border); transition:all .18s ease; gap:12px; }
+  .active-peer-card:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.06); border-color:rgba(34,197,94,0.4); }
+  body.dark .active-peer-card { background:#1e293b; border-color:#334155; }
+  body.dark .active-peer-card:hover { border-color:rgba(34,197,94,0.6); }
   .search-trigger-btn { border-radius:10px; font-size:13px; font-weight:600; padding:7px 12px; height:36px; display:inline-flex; align-items:center; gap:6px; background:#fff; border:1px solid var(--border); cursor:pointer; color:var(--text-1); }
   body.dark .search-trigger-btn { background:#1e293b; border-color:#334155; color:#f8fafc; }
   
@@ -646,6 +655,28 @@
   .active-member-item:hover { transform:translateX(3px); background:#f1f5f9; }
   body.dark .active-member-item { background:#1e293b; border-color:#334155; }
   .badge-tag { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:6px; background:rgba(37,99,235,0.1); color:var(--blue); }
+
+  /* Admin Leaderboard & Gamification Styles */
+  .lb-filter-btn { background: transparent; border: none; color: var(--text-2); font-weight: 600; cursor: pointer; transition: all .15s ease; }
+  .lb-filter-btn.active { background: #fff; color: var(--accent); font-weight: 800; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.06); }
+  body.dark .lb-filter-btn.active { background: #1e293b; color: #60a5fa; border-color: #334155; }
+  .admin-podium-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .admin-podium-card { border-radius: 16px; padding: 18px; position: relative; border: 1px solid var(--border); transition: transform .15s ease, box-shadow .15s ease; }
+  .admin-podium-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+  .admin-podium-card.rank-1 { background: linear-gradient(180deg, #fffbeb 0%, #fff 100%); border-color: #fde68a; border-top: 4px solid #f59e0b; }
+  body.dark .admin-podium-card.rank-1 { background: linear-gradient(180deg, #2a200a 0%, #1e293b 100%); border-color: #78350f; border-top-color: #f59e0b; }
+  .admin-podium-card.rank-2 { background: linear-gradient(180deg, #f8fafc 0%, #fff 100%); border-color: #cbd5e1; border-top: 4px solid #94a3b8; }
+  body.dark .admin-podium-card.rank-2 { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border-color: #334155; border-top-color: #94a3b8; }
+  .admin-podium-card.rank-3 { background: linear-gradient(180deg, #fff7ed 0%, #fff 100%); border-color: #fed7aa; border-top: 4px solid #d97706; }
+  body.dark .admin-podium-card.rank-3 { background: linear-gradient(180deg, #261505 0%, #1e293b 100%); border-color: #7c2d12; border-top-color: #d97706; }
+  .admin-lb-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); margin-bottom: 10px; transition: all .15s ease; }
+  .admin-lb-row:hover { background: var(--bg-app); border-color: var(--accent); }
+  .admin-lb-rank-badge { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+  .admin-lb-rank-badge.gold { background: linear-gradient(135deg, #fef08a, #f59e0b); color: #78350f; box-shadow: 0 2px 6px rgba(245,158,11,0.3); }
+  .admin-lb-rank-badge.silver { background: linear-gradient(135deg, #f1f5f9, #cbd5e1); color: #334155; box-shadow: 0 2px 6px rgba(148,163,184,0.3); }
+  .admin-lb-rank-badge.bronze { background: linear-gradient(135deg, #ffedd5, #fdba74); color: #7c2d12; box-shadow: 0 2px 6px rgba(217,119,6,0.3); }
+  .admin-lb-rank-badge.standard { background: var(--bg-app); color: var(--text-2); border: 1px solid var(--border); }
+  .admin-metric-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; padding: 3px 8px; border-radius: 6px; background: var(--bg-app); border: 1px solid var(--border); color: var(--text-2); font-weight: 600; }
 
   @media (max-width: 768px) {
     .messaging-layout { grid-template-columns: 1fr; }
@@ -1949,14 +1980,21 @@
           </div>
         </div>
 
-        <!-- MOST ACTIVE LEARNERS WIDGET -->
-        <div class="card" style="margin-bottom:18px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <div class="section-title" style="margin:0;">Most Active Learners</div>
-            <button class="link-btn" onclick="goTo('leaderboard')">View Full Leaderboard →</button>
+        <!-- REAL-TIME CURRENTLY ACTIVE PEERS & STUDY PARTNERS -->
+        <div class="card" id="dash-active-peers-card" style="margin-bottom:18px;border-left:4px solid #22c55e;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="presence-dot online" style="width:10px;height:10px;"></span>
+              <div class="section-title" style="margin:0;">Currently Active Peers</div>
+              <span class="badge-tag" id="dash-active-peers-badge" style="background:rgba(34,197,94,0.15);color:#15803d;font-size:11.5px;font-weight:700;">🟢 Checking live status...</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="link-btn" onclick="goTo('messages')" style="font-size:12.5px;font-weight:700;">💬 Direct Messages</button>
+              <button class="link-btn" onclick="goTo('directory')" style="font-size:12.5px;">All Students →</button>
+            </div>
           </div>
-          <div id="dash-active-learners-widget" class="grid-2">
-            <!-- Active Learners Top 5 populated dynamically -->
+          <div id="dash-active-learners-widget">
+            <!-- Real-time active peers populated dynamically from Firebase presence -->
           </div>
         </div>
 
@@ -2652,6 +2690,32 @@
           <div class="card stat-card"><div class="stat-label">Avg. Attendance</div><div class="stat-value" id="admin-avg-attendance">0%</div></div>
         </div>
 
+        <!-- ADMIN: REAL-TIME CURRENTLY ACTIVE STUDENTS (LIVE PRESENCE) -->
+        <div class="card" style="margin-bottom:18px;border-top:4px solid #22c55e;background:var(--bg-card);" id="admin-active-students-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px;">
+            <div>
+              <div class="section-title" style="margin:0;display:inline-flex;align-items:center;gap:8px;">
+                <span class="presence-dot online" style="width:10px;height:10px;"></span>
+                <span>Currently Active Students (Real-Time Live Presence)</span>
+              </div>
+              <p style="font-size:12.5px;color:var(--text-2);margin:4px 0 0 0;">
+                Live heartbeat monitoring of students actively studying modules, taking quizzes, or interacting in CLARIQ right now.
+              </p>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span id="admin-active-students-badge" class="badge-tag" style="background:rgba(34,197,94,0.15);color:#15803d;font-size:12px;font-weight:800;padding:4px 10px;border-radius:8px;">
+                🟢 0 Students Active Now
+              </span>
+              <button class="btn btn-outline btn-sm" onclick="refreshLivePresenceData(true)" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:5px 10px;">
+                🔄 Refresh
+              </button>
+            </div>
+          </div>
+          <div id="admin-active-students-container">
+            <!-- Populated dynamically with real-time active students -->
+          </div>
+        </div>
+
         <!-- ADMIN MESSAGING & BROADCAST OVERVIEW & QUICK COMPOSER -->
         <div class="card" style="margin-bottom:18px;border-top:4px solid var(--accent);background:var(--bg-card);">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px;">
@@ -2720,6 +2784,41 @@
                 <p style="font-size:12px;color:var(--text-2);text-align:center;padding:20px;">Loading recent broadcasts...</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- ADMIN LEADERBOARD: TOP 10 HIGHEST-PERFORMING STUDENTS (REAL-TIME) -->
+        <div class="card" style="margin-bottom:18px;border-top:4px solid #f59e0b;background:var(--bg-card);" id="admin-leaderboard-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:14px;">
+            <div>
+              <div class="section-title" style="margin:0;display:inline-flex;align-items:center;gap:8px;">
+                <span style="font-size:20px;">🏆</span> Top 10 High-Performing Students Leaderboard
+              </div>
+              <p style="font-size:12.5px;color:var(--text-2);margin:4px 0 0 0;">
+                Live academic rankings calculated from real course progress, lesson completion, quiz battles, learning time, and active submissions.
+              </p>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <div style="display:flex;gap:4px;background:var(--bg-app);padding:3px;border-radius:10px;border:1px solid var(--border);" id="admin-lb-tabs">
+                <button class="btn btn-sm lb-filter-btn active" id="admin-lb-tab-overall" onclick="switchAdminLeaderboardMetric('OVERALL')" style="font-size:12px;padding:5px 10px;border-radius:8px;">Overall Score ⚡</button>
+                <button class="btn btn-sm lb-filter-btn" id="admin-lb-tab-progress" onclick="switchAdminLeaderboardMetric('PROGRESS')" style="font-size:12px;padding:5px 10px;border-radius:8px;">Course Progress 📚</button>
+                <button class="btn btn-sm lb-filter-btn" id="admin-lb-tab-quiz" onclick="switchAdminLeaderboardMetric('QUIZ')" style="font-size:12px;padding:5px 10px;border-radius:8px;">Quiz Arena 🎯</button>
+                <button class="btn btn-sm lb-filter-btn" id="admin-lb-tab-time" onclick="switchAdminLeaderboardMetric('TIME')" style="font-size:12px;padding:5px 10px;border-radius:8px;">Time & Streaks 🔥</button>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btn-admin-recalc-lb" onclick="refreshAdminLeaderboardLive(true)" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 12px;">
+                <span id="admin-lb-sync-icon">🔄</span> Recalculate
+              </button>
+            </div>
+          </div>
+
+          <!-- Top 3 Podium Highlights -->
+          <div id="admin-leaderboard-podium" style="margin-bottom:16px;">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Top 10 Full Ranked Table Container -->
+          <div id="admin-leaderboard-table-container">
+            <!-- Rendered dynamically -->
           </div>
         </div>
 
@@ -5672,6 +5771,9 @@ async function loginAs(email, knownUser){
 }
 
 async function doLogout(){
+  if (currentUser && typeof updateUserPresence === 'function') {
+    try { await updateUserPresence('offline'); } catch(e){}
+  }
   if(fbAuth) await fbAuth.signOut();
   currentUser = null;
   document.getElementById('app-screen').style.display = 'none';
@@ -5996,9 +6098,21 @@ function overallProgressPct(){
 }
 async function saveProgress(){
   await dbSet('progress:' + currentUser.email, currentProgress, true);
+  if (typeof invalidateStudentsPerformanceCache === 'function') invalidateStudentsPerformanceCache();
+  if (currentView === 'admin-dashboard' && typeof renderAdminLeaderboard === 'function') {
+    renderAdminLeaderboard();
+  } else if (currentView === 'leaderboard' && typeof renderLeaderboardView === 'function') {
+    renderLeaderboardView();
+  }
 }
 async function saveAssignments(){
   await dbSet('assignments:' + currentUser.email, currentAssignments, true);
+  if (typeof invalidateStudentsPerformanceCache === 'function') invalidateStudentsPerformanceCache();
+  if (currentView === 'admin-dashboard' && typeof renderAdminLeaderboard === 'function') {
+    renderAdminLeaderboard();
+  } else if (currentView === 'leaderboard' && typeof renderLeaderboardView === 'function') {
+    renderLeaderboardView();
+  }
 }
 
 /* ---------------- dashboard ---------------- */
@@ -6049,6 +6163,7 @@ function renderDashboard(){
   if (typeof renderWeeklyLearningProgram === 'function') renderWeeklyLearningProgram();
   if (typeof renderDashboardBirthdayBanner === 'function') renderDashboardBirthdayBanner();
   if (typeof renderCelebratingMembersWidget === 'function') renderCelebratingMembersWidget();
+  if (typeof renderStudentActivePeersWidget === 'function') renderStudentActivePeersWidget();
 }
 
 function renderDashboardAnnouncements(){
@@ -6261,6 +6376,7 @@ async function maybeIssueCertificate(courseId){
   if(currentCertificates[courseId]) return;
   currentCertificates[courseId] = {code: genCertCode(courseId), issuedAt: new Date().toISOString()};
   await dbSet('certificates:' + currentUser.email, currentCertificates, true);
+  if (typeof invalidateStudentsPerformanceCache === 'function') invalidateStudentsPerformanceCache();
   // certificates are looked up globally by code for verification
   const course = courseById(courseId);
   await dbSet('cert-registry:' + currentCertificates[courseId].code, {
@@ -8099,7 +8215,421 @@ function studentOverallPct(progress){
     const completed = (progress[c.id] && progress[c.id].completed) || [];
     return total ? Math.round((completed.length / total) * 100) : 0;
   });
-  return Math.round(pcts.reduce((a,b)=>a+b,0) / pcts.length);
+  return pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0) / pcts.length) : 0;
+}
+
+/* ============================================================
+   REAL STUDENT PERFORMANCE & LEADERBOARD RANKING ENGINE
+   ============================================================ */
+let cachedStudentsPerformance = null;
+let cachedStudentsPerformanceTime = 0;
+const PERFORMANCE_CACHE_TTL = 15000; // 15 seconds
+
+function invalidateStudentsPerformanceCache() {
+  cachedStudentsPerformance = null;
+  cachedStudentsPerformanceTime = 0;
+}
+
+// Compare students using strict, multi-tiered deterministic tie-breakers
+function compareStudentPerformance(a, b) {
+  // 1. Total Composite Score (Highest first)
+  if (b.compositeScore !== a.compositeScore) return b.compositeScore - a.compositeScore;
+  // 2. Overall Course Progress Percentage (Highest first)
+  if (b.overallPct !== a.overallPct) return b.overallPct - a.overallPct;
+  // 3. Completed Lessons Count (Highest first)
+  if (b.completedLessonsCount !== a.completedLessonsCount) return b.completedLessonsCount - a.completedLessonsCount;
+  // 4. Quiz Arena XP / Score (Highest first)
+  if (b.quizXP !== a.quizXP) return b.quizXP - a.quizXP;
+  // 5. Total Learning Time in Active Seconds (Highest first)
+  if (b.totalActiveSeconds !== a.totalActiveSeconds) return b.totalActiveSeconds - a.totalActiveSeconds;
+  // 6. Active Daily Streak (Highest first)
+  if (b.streakDays !== a.streakDays) return b.streakDays - a.streakDays;
+  // 7. Certificates Earned (Highest first)
+  if (b.certificatesCount !== a.certificatesCount) return b.certificatesCount - a.certificatesCount;
+  // 8. Assignments Submitted (Highest first)
+  if (b.assignmentsSubmitted !== a.assignmentsSubmitted) return b.assignmentsSubmitted - a.assignmentsSubmitted;
+  // 9. Deterministic tie-breaker by Name / Registration
+  return (a.name || a.email).localeCompare(b.name || b.email);
+}
+
+// Unified performance data query engine (Uses real Firebase Auth and Firestore data only)
+async function getAllStudentsPerformanceData(forceRefresh = false) {
+  const now = Date.now();
+  if (!forceRefresh && cachedStudentsPerformance && (now - cachedStudentsPerformanceTime < PERFORMANCE_CACHE_TTL)) {
+    return cachedStudentsPerformance;
+  }
+
+  const rawStudents = await loadAllStudents(forceRefresh);
+  // Strictly filter out any demo or system admin accounts to include ONLY real registered students
+  const registeredStudents = (rawStudents || []).filter(s => {
+    if (!s || !s.email) return false;
+    const em = s.email.toLowerCase().trim();
+    if (em === 'demo@clariq.app' || em === 'admin@clariq.app') return false;
+    if (s.role === 'admin' && em.includes('admin@')) return false;
+    return true;
+  });
+
+  const allCourses = getAllCourses();
+  const totalAcademyLessons = allCourses.reduce((acc, c) => acc + allLessonIds(c).length, 0);
+
+  // Fetch student progress, assignments, certs, streak, quiz xp, and usage in parallel
+  const performanceList = await Promise.all(registeredStudents.map(async (s) => {
+    const email = s.email.toLowerCase().trim();
+    const [progress, assignments, certificates, attendance, streak, quizXPVal, usage] = await Promise.all([
+      dbGet('progress:' + email, true),
+      dbGet('assignments:' + email, true),
+      dbGet('certificates:' + email, true),
+      dbGet('attendance:' + email, true),
+      dbGet('streak:' + email, true),
+      dbGet('quiz_xp:' + email, true),
+      dbGet('usage:' + email, true)
+    ]);
+
+    const progData = progress || {};
+    const assignData = assignments || {};
+    const certData = certificates || {};
+    const attData = attendance || {};
+    const streakData = streak || { count: s.streakDays || 0, lastActiveDate: null };
+    const usageData = usage || {};
+
+    // 1. Course Progress & Lesson Completion
+    let completedLessonsCount = 0;
+    allCourses.forEach(c => {
+      const done = (progData[c.id] && progData[c.id].completed) || [];
+      completedLessonsCount += done.length;
+    });
+    const overallPct = studentOverallPct(progData);
+
+    // 2. Quiz Performance (Actual earned Quiz Arena XP)
+    const quizXP = typeof quizXPVal === 'number' ? quizXPVal : (s.xp || 0);
+
+    // 3. Learning Time & Activity Logged
+    let totalActiveSeconds = 0;
+    let totalActivitiesCount = 0;
+    Object.values(usageData).forEach(day => {
+      if (day && typeof day === 'object') {
+        totalActiveSeconds += (day.activeSeconds || 0);
+        totalActivitiesCount += ((day.activities || []).length);
+      }
+    });
+
+    // If current logged-in user, include pending active second buffer
+    if (currentUser && currentUser.email && currentUser.email.toLowerCase() === email && typeof pendingActiveSeconds === 'number' && pendingActiveSeconds > 0) {
+      totalActiveSeconds += pendingActiveSeconds;
+    }
+
+    const totalActiveMinutes = Math.round(totalActiveSeconds / 60);
+    const formattedTime = typeof formatTimeSpent === 'function' ? formatTimeSpent(totalActiveMinutes) : `${totalActiveMinutes}m`;
+
+    // 4. Streaks & Milestones
+    const streakDays = streakData.count || s.streakDays || 0;
+    const assignmentsSubmitted = Object.values(assignData).filter(a => a && (a.status === 'Submitted' || a.status === 'Graded' || a.text)).length;
+    const certificatesCount = Object.keys(certData).length;
+
+    // 5. Composite Performance Points Calculation
+    // (Lesson Completion + Course Progress Bonus + Quiz XP + Learning Time + Streak + Assignments + Certs)
+    const compositeScore = Math.round(
+      (completedLessonsCount * 100) +
+      (overallPct * 10) +
+      (quizXP * 1) +
+      (totalActiveMinutes * 2) +
+      (streakDays * 50) +
+      (assignmentsSubmitted * 150) +
+      (certificatesCount * 300)
+    );
+
+    const isOnline = (streakData.lastActiveDate === new Date().toISOString().slice(0, 10)) ||
+                     (s.lastActive && (Date.now() - s.lastActive < 180000));
+
+    return {
+      email,
+      name: s.name || (email.includes('@') ? email.split('@')[0] : email),
+      photoUrl: s.photoUrl || s.avatar || null,
+      avatar: s.avatar || s.photoUrl || null,
+      country: s.country || 'Nigeria',
+      phone: s.phone || '',
+      uid: s.uid || null,
+      dob: s.dob || '',
+      createdAt: s.createdAt || '',
+      status: s.status || 'active',
+      authMethod: s.authMethod || 'email',
+      completedLessonsCount,
+      totalAcademyLessons,
+      overallPct,
+      quizXP,
+      totalActiveSeconds,
+      totalActiveMinutes,
+      formattedTime,
+      totalActivitiesCount,
+      streakDays,
+      assignmentsSubmitted,
+      certificatesCount,
+      compositeScore,
+      isOnline,
+      progress: progData,
+      assignments: assignData,
+      certificates: certData,
+      attendance: attData,
+      streak: streakData
+    };
+  }));
+
+  cachedStudentsPerformance = performanceList;
+  cachedStudentsPerformanceTime = Date.now();
+  return performanceList;
+}
+
+let currentAdminLeaderboardMetric = 'OVERALL';
+
+function switchAdminLeaderboardMetric(metric) {
+  currentAdminLeaderboardMetric = metric;
+  const tabs = ['overall', 'progress', 'quiz', 'time'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`admin-lb-tab-${t}`);
+    if (btn) {
+      if (t === metric.toLowerCase()) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    }
+  });
+  renderAdminLeaderboard();
+}
+
+function sortStudentsByMetric(students, metric) {
+  const list = [...students];
+  if (metric === 'PROGRESS') {
+    list.sort((a, b) => {
+      if (b.overallPct !== a.overallPct) return b.overallPct - a.overallPct;
+      if (b.completedLessonsCount !== a.completedLessonsCount) return b.completedLessonsCount - a.completedLessonsCount;
+      return compareStudentPerformance(a, b);
+    });
+  } else if (metric === 'QUIZ') {
+    list.sort((a, b) => {
+      if (b.quizXP !== a.quizXP) return b.quizXP - a.quizXP;
+      return compareStudentPerformance(a, b);
+    });
+  } else if (metric === 'TIME') {
+    list.sort((a, b) => {
+      if (b.totalActiveSeconds !== a.totalActiveSeconds) return b.totalActiveSeconds - a.totalActiveSeconds;
+      if (b.streakDays !== a.streakDays) return b.streakDays - a.streakDays;
+      return compareStudentPerformance(a, b);
+    });
+  } else {
+    // Default OVERALL Composite Score
+    list.sort(compareStudentPerformance);
+  }
+  return list;
+}
+
+async function renderAdminLeaderboard() {
+  const podiumContainer = document.getElementById('admin-leaderboard-podium');
+  const tableContainer = document.getElementById('admin-leaderboard-table-container');
+  if (!podiumContainer && !tableContainer) return;
+
+  const allPerformanceData = await getAllStudentsPerformanceData();
+  const sorted = sortStudentsByMetric(allPerformanceData, currentAdminLeaderboardMetric);
+  const top10 = sorted.slice(0, 10);
+
+  if (!sorted.length) {
+    if (podiumContainer) podiumContainer.innerHTML = '';
+    if (tableContainer) {
+      tableContainer.innerHTML = `
+        <div style="padding:40px 20px;text-align:center;color:var(--text-2);background:var(--bg-app);border-radius:14px;border:1px dashed var(--border);">
+          <div style="font-size:32px;margin-bottom:8px;">👥</div>
+          <b style="font-size:15px;color:var(--text-1);display:block;margin-bottom:4px;">No Registered Students Found Yet</b>
+          <span style="font-size:12.5px;">As real students enroll and complete lessons, quiz battles, and learning milestones, their live rankings will appear here automatically.</span>
+        </div>`;
+    }
+    return;
+  }
+
+  // Render Top 3 Podium Highlights
+  if (podiumContainer) {
+    const top3 = sorted.slice(0, 3);
+    const podiumHtml = `
+      <div class="admin-podium-grid">
+        ${top3.map((s, idx) => {
+          const rank = idx + 1;
+          const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : 'rank-3');
+          const medal = rank === 1 ? '🥇 1st Place' : (rank === 2 ? '🥈 2nd Place' : '🥉 3rd Place');
+          const medalBadgeStyle = rank === 1 ? 'background:#fef08a;color:#854d0e;border:1px solid #facc15;' :
+                                  (rank === 2 ? 'background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;' :
+                                   'background:#ffedd5;color:#9a3412;border:1px solid #fdba74;');
+
+          const primaryScoreDisplay = currentAdminLeaderboardMetric === 'PROGRESS' ? `${s.overallPct}% Progress` :
+                                      (currentAdminLeaderboardMetric === 'QUIZ' ? `${s.quizXP} Quiz XP` :
+                                       (currentAdminLeaderboardMetric === 'TIME' ? `${s.formattedTime} active` :
+                                        `${s.compositeScore.toLocaleString()} pts`));
+
+          return `
+            <div class="admin-podium-card ${rankClass}">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <span class="badge" style="${medalBadgeStyle};font-weight:800;font-size:12px;padding:4px 10px;border-radius:8px;">${medal}</span>
+                <span style="font-size:12px;color:var(--text-2);font-weight:700;">${escapeHtml(s.country)}</span>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                <div style="position:relative;flex-shrink:0;">
+                  ${typeof renderUserAvatar === 'function' ? renderUserAvatar(s, 52) : `<div class="avatar" style="width:52px;height:52px;font-size:18px;">${initials(s.name)}</div>`}
+                  <span style="position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:99px;background:${s.isOnline ? '#22c55e' : '#94a3b8'};border:2px solid #fff;" title="${s.isOnline ? 'Online Today' : 'Offline'}"></span>
+                </div>
+                <div style="overflow:hidden;flex:1;">
+                  <b style="font-size:15px;color:var(--text-1);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" onclick="openAdminStudentDetailsModal('${s.email}')" title="${escapeHtml(s.name)}">
+                    ${escapeHtml(s.name)}
+                  </b>
+                  <span style="font-size:12px;color:var(--text-2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    ${escapeHtml(s.email)}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Key Metrics Highlight -->
+              <div style="background:var(--bg-card);padding:10px 12px;border-radius:10px;border:1px solid var(--border);margin-bottom:12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-size:11.5px;color:var(--text-2);font-weight:700;">PERFORMANCE SCORE</span>
+                  <b style="font-size:14px;color:var(--accent);">${primaryScoreDisplay}</b>
+                </div>
+                <!-- Progress Bar -->
+                <div style="width:100%;height:7px;background:var(--bg-app);border-radius:99px;overflow:hidden;margin-bottom:6px;">
+                  <div style="width:${s.overallPct}%;height:100%;background:linear-gradient(90deg,#2563eb,#38bdf8);border-radius:99px;"></div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--text-2);">
+                  <span>${s.completedLessonsCount} / ${s.totalAcademyLessons} lessons</span>
+                  <span>🔥 ${s.streakDays}d streak</span>
+                </div>
+              </div>
+
+              <!-- Micro Stats Tags -->
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+                <span class="admin-metric-chip" title="Active Time Spent">⏱️ ${s.formattedTime}</span>
+                <span class="admin-metric-chip" title="Quiz Arena XP">🎯 ${s.quizXP} XP</span>
+                <span class="admin-metric-chip" title="Certificates Earned">🎓 ${s.certificatesCount} certs</span>
+              </div>
+
+              <button class="btn btn-outline btn-sm" style="width:100%;font-size:12px;padding:6px;border-radius:8px;font-weight:700;" onclick="openAdminStudentDetailsModal('${s.email}')">
+                📋 Inspect Full Learning Profile
+              </button>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    podiumContainer.innerHTML = podiumHtml;
+  }
+
+  // Render Full Top 10 Ranked Table
+  if (tableContainer) {
+    let rowsHtml = `
+      <div style="border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg-card);">
+        <div style="display:grid;grid-template-columns:60px 2.2fr 1.6fr 1fr 1.2fr 1.2fr 90px;padding:12px 16px;background:var(--bg-app);border-bottom:1px solid var(--border);font-size:11.5px;font-weight:800;color:var(--text-2);letter-spacing:0.5px;text-transform:uppercase;" class="admin-lb-table-header">
+          <span>Rank</span>
+          <span>Student Learner</span>
+          <span>Course Progress</span>
+          <span>Quiz XP</span>
+          <span>Time & Streak</span>
+          <span>Overall Score</span>
+          <span style="text-align:right;">Action</span>
+        </div>
+        <div style="padding:8px;">
+          ${top10.map((s, idx) => {
+            const rank = idx + 1;
+            const rankBadgeClass = rank === 1 ? 'gold' : (rank === 2 ? 'silver' : (rank === 3 ? 'bronze' : 'standard'));
+            const rankLabel = rank === 1 ? '🥇 1' : (rank === 2 ? '🥈 2' : (rank === 3 ? '🥉 3' : `#${rank}`));
+
+            return `
+              <div class="admin-lb-row">
+                <!-- Rank Badge -->
+                <div class="admin-lb-rank-badge ${rankBadgeClass}">
+                  ${rankLabel}
+                </div>
+
+                <!-- Student Avatar & Name -->
+                <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:2.2;">
+                  <div style="position:relative;flex-shrink:0;">
+                    ${typeof renderUserAvatar === 'function' ? renderUserAvatar(s, 38) : `<div class="avatar" style="width:38px;height:38px;font-size:13px;">${initials(s.name)}</div>`}
+                    <span style="position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:99px;background:${s.isOnline ? '#22c55e' : '#94a3b8'};border:1.5px solid #fff;" title="${s.isOnline ? 'Active' : 'Offline'}"></span>
+                  </div>
+                  <div style="min-width:0;overflow:hidden;">
+                    <b style="font-size:13.5px;color:var(--text-1);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" onclick="openAdminStudentDetailsModal('${s.email}')">
+                      ${escapeHtml(s.name)}
+                    </b>
+                    <span style="font-size:11.5px;color:var(--text-2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                      ${escapeHtml(s.email)}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Course Progress -->
+                <div style="flex:1.6;padding-right:12px;">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">
+                    <b style="color:var(--text-1);">${s.overallPct}%</b>
+                    <span style="color:var(--text-2);font-size:11px;">${s.completedLessonsCount}/${s.totalAcademyLessons}</span>
+                  </div>
+                  <div style="width:100%;height:6px;background:var(--bg-app);border-radius:99px;overflow:hidden;border:1px solid var(--border);">
+                    <div style="width:${s.overallPct}%;height:100%;background:linear-gradient(90deg,#2563eb,#38bdf8);border-radius:99px;"></div>
+                  </div>
+                </div>
+
+                <!-- Quiz XP -->
+                <div style="flex:1;">
+                  <span class="badge" style="background:#eff6ff;color:#2563eb;font-weight:800;font-size:12px;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe;">
+                    🎯 ${s.quizXP} XP
+                  </span>
+                </div>
+
+                <!-- Time Spent & Streak -->
+                <div style="flex:1.2;font-size:12px;">
+                  <div style="font-weight:700;color:var(--text-1);">⏱️ ${s.formattedTime}</div>
+                  <div style="font-size:11px;color:#d97706;font-weight:700;">🔥 ${s.streakDays}d streak</div>
+                </div>
+
+                <!-- Overall Score / Relevant Metric -->
+                <div style="flex:1.2;">
+                  <span class="badge" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;font-weight:800;font-size:12.5px;padding:4px 10px;border-radius:8px;border:1px solid #fcd34d;">
+                    ⚡ ${s.compositeScore.toLocaleString()} pts
+                  </span>
+                </div>
+
+                <!-- Action Button -->
+                <div style="text-align:right;flex:0 0 80px;">
+                  <button class="btn btn-outline btn-sm" style="padding:4px 10px;font-size:11.5px;border-radius:8px;" onclick="openAdminStudentDetailsModal('${s.email}')" title="View detailed profile">
+                    Details
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        <div style="padding:10px 16px;background:var(--bg-app);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text-2);">
+          <span>Showing Top <b>${top10.length}</b> of <b>${sorted.length}</b> registered students</span>
+          <span style="font-weight:600;">Rankings automatically synchronized from live Firestore progress</span>
+        </div>
+      </div>
+    `;
+    tableContainer.innerHTML = rowsHtml;
+  }
+}
+
+async function refreshAdminLeaderboardLive(force = false) {
+  const syncBtn = document.getElementById('btn-admin-recalc-lb');
+  const syncIcon = document.getElementById('admin-lb-sync-icon');
+  if (syncBtn) syncBtn.disabled = true;
+  if (syncIcon) syncIcon.style.animation = 'spin 1s linear infinite';
+
+  try {
+    invalidateStudentsPerformanceCache();
+    invalidateStudentsCache();
+    await renderAdminLeaderboard();
+    toast('Leaderboard rankings recalculated from live Firebase learning progress! 🏆');
+  } catch (err) {
+    console.error('Error recalculating leaderboard:', err);
+    toast('Leaderboard update notice. Check logs.');
+  } finally {
+    if (syncBtn) syncBtn.disabled = false;
+    if (syncIcon) syncIcon.style.animation = 'none';
+  }
 }
 
 /* ---------- Admin: Dashboard overview ---------- */
@@ -8143,6 +8673,12 @@ async function renderAdminDashboard(){
     document.getElementById('dash-bcast-sent-count').textContent = bcastHistory.length;
     renderDashRecentBroadcasts(bcastHistory);
   }
+
+  // Render Admin Active Students, Leaderboard, Birthdays, and Student Usage Auditor
+  if (typeof renderAdminActiveStudentsWidget === 'function') await renderAdminActiveStudentsWidget();
+  if (typeof renderAdminLeaderboard === 'function') await renderAdminLeaderboard();
+  if (typeof renderAdminBirthdayCountdown === 'function') await renderAdminBirthdayCountdown();
+  if (typeof renderAdminStudentUsageInspection === 'function') await renderAdminStudentUsageInspection();
 }
 
 /* ---------- Admin: Students ---------- */
@@ -10721,6 +11257,9 @@ async function finishQuizBattle(){
   const finalScore = quizGameState.userScore;
   currentQuizXP += finalScore;
   await dbSet('quiz_xp:' + currentUser.email, currentQuizXP, true);
+  if (typeof invalidateStudentsPerformanceCache === 'function') invalidateStudentsPerformanceCache();
+  if (currentView === 'admin-dashboard' && typeof renderAdminLeaderboard === 'function') renderAdminLeaderboard();
+  if (currentView === 'leaderboard' && typeof renderLeaderboardView === 'function') renderLeaderboardView();
 
   const xpEl = document.getElementById('quiz-total-xp');
   if(xpEl) xpEl.textContent = currentQuizXP;
@@ -10887,52 +11426,526 @@ function updateHeaderGamification() {
   }
 }
 
-function renderActiveMembersWidget() {
-  const container = document.getElementById('active-members-widget-list') || document.getElementById('dash-active-members') || document.getElementById('dash-active-learners-widget');
-  if (container && typeof getStudentDirectoryMembers === 'function') {
-    getStudentDirectoryMembers().then(members => {
-      const active = (members || []).slice(0, 5);
-      container.innerHTML = active.map(u => `
-        <div class="active-member-item" onclick="openStudentProfileModal('${u.email}')" style="cursor:pointer;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            ${typeof renderUserAvatar === 'function' ? renderUserAvatar(u, 28) : ''}
-            <div>
-              <b style="font-size:12.5px;color:var(--text-1);display:block;">${escapeHtml(u.name || u.email)}</b>
-              <span style="font-size:11px;color:var(--text-2);">${u.role === 'admin' ? 'Mentor' : 'Student'}</span>
-            </div>
-          </div>
-          <span class="badge-tag">Online</span>
-        </div>
-      `).join('');
-    });
-  }
+/* ================= REAL-TIME FIREBASE PRESENCE & ACTIVE USERS SYSTEM ================= */
+let globalPresenceMap = {};
+let presenceFirestoreUnsub = null;
+let lastPresenceHeartbeatTime = 0;
+let presenceHeartbeatInterval = null;
+let presenceEvaluationTimer = null;
+const PRESENCE_ACTIVE_TIMEOUT_MS = 65000; // 65 seconds active window
+const PRESENCE_HEARTBEAT_INTERVAL_MS = 25000; // 25 seconds heartbeat
+
+function isStudentOnline(presenceEntry) {
+  if (!presenceEntry) return false;
+  if (presenceEntry.state === 'offline') return false;
+  const last = presenceEntry.lastActive || presenceEntry.updatedAt || 0;
+  if (!last || typeof last !== 'number') return false;
+  return (Date.now() - last) <= PRESENCE_ACTIVE_TIMEOUT_MS;
 }
 
-// Optimized Global Presence Heartbeat
-let lastPresenceWriteTime = 0;
+function formatPresence(timestampOrEntry) {
+  let isOnline = false;
+  let timestamp = 0;
+
+  if (typeof timestampOrEntry === 'object' && timestampOrEntry !== null) {
+    timestamp = timestampOrEntry.lastActive || timestampOrEntry.updatedAt || 0;
+    isOnline = isStudentOnline(timestampOrEntry);
+  } else if (typeof timestampOrEntry === 'string') {
+    const safeKey = typeof firestoreSafeKey === 'function' ? firestoreSafeKey(timestampOrEntry.toLowerCase().trim()) : timestampOrEntry.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const entry = globalPresenceMap[safeKey];
+    if (entry) {
+      timestamp = entry.lastActive || entry.updatedAt || 0;
+      isOnline = isStudentOnline(entry);
+    }
+  } else if (typeof timestampOrEntry === 'number') {
+    timestamp = timestampOrEntry;
+    isOnline = timestamp > 0 && (Date.now() - timestamp) <= PRESENCE_ACTIVE_TIMEOUT_MS;
+  }
+
+  if (isOnline) {
+    return {
+      online: true,
+      text: 'Active Now',
+      dotClass: 'online',
+      badgeHtml: '<span class="badge-tag" style="background:rgba(34,197,94,0.15);color:#15803d;font-weight:700;"><span class="presence-dot online"></span>Active Now</span>'
+    };
+  }
+  if (!timestamp) {
+    return {
+      online: false,
+      text: 'Offline',
+      dotClass: 'offline',
+      badgeHtml: '<span class="badge-tag" style="background:#f1f5f9;color:var(--text-2);font-weight:600;"><span class="presence-dot offline"></span>Offline</span>'
+    };
+  }
+  const diff = Math.max(0, Date.now() - timestamp);
+  if (diff < 3600000) {
+    const mins = Math.max(1, Math.floor(diff / 60000));
+    return {
+      online: false,
+      text: `${mins}m ago`,
+      dotClass: 'offline',
+      badgeHtml: `<span class="badge-tag" style="background:#f1f5f9;color:var(--text-2);font-weight:600;"><span class="presence-dot offline"></span>Active ${mins}m ago</span>`
+    };
+  }
+  if (diff < 86400000) {
+    const hrs = Math.floor(diff / 3600000);
+    return {
+      online: false,
+      text: `${hrs}h ago`,
+      dotClass: 'offline',
+      badgeHtml: `<span class="badge-tag" style="background:#f1f5f9;color:var(--text-2);font-weight:600;"><span class="presence-dot offline"></span>Active ${hrs}h ago</span>`
+    };
+  }
+  return {
+    online: false,
+    text: 'Offline',
+    dotClass: 'offline',
+    badgeHtml: '<span class="badge-tag" style="background:#f1f5f9;color:var(--text-2);font-weight:600;"><span class="presence-dot offline"></span>Offline</span>'
+  };
+}
+
+async function updateUserPresence(state = 'online') {
+  if (!currentUser || !currentUser.email) return;
+  const now = Date.now();
+  const safeEmail = typeof firestoreSafeKey === 'function' ? firestoreSafeKey(currentUser.email.toLowerCase().trim()) : currentUser.email.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+  let currentCourseName = 'Meta Ads Mastery';
+  try {
+    const allC = typeof getAllCourses === 'function' ? getAllCourses() : [];
+    if (allC.length) currentCourseName = allC[0].name;
+  } catch (e) {}
+
+  const presenceData = {
+    email: currentUser.email.toLowerCase().trim(),
+    name: currentUser.name || currentUser.email.split('@')[0],
+    role: currentUser.role || 'student',
+    photoUrl: currentUser.photoUrl || currentUser.avatar || null,
+    avatar: currentUser.avatar || currentUser.photoUrl || null,
+    lastActive: now,
+    state: state,
+    currentCourse: currentCourseName,
+    activeView: typeof currentView !== 'undefined' ? currentView : 'dashboard',
+    updatedAt: now
+  };
+
+  // 1. Update in-memory reactive map immediately
+  globalPresenceMap[safeEmail] = presenceData;
+  currentUser.lastActive = now;
+  lastPresenceHeartbeatTime = now;
+
+  // 2. Trigger instant local UI update
+  triggerLivePresenceUIUpdate();
+
+  // 3. Write to Firestore presence document
+  if (fbDb) {
+    try {
+      const docRef = fbDb.collection('clariq').doc('presence_registry');
+      await docRef.set({
+        [safeEmail]: presenceData
+      }, { merge: true });
+    } catch (err) {
+      try {
+        await fbDb.collection('clariq').doc('presence_' + safeEmail).set(presenceData);
+      } catch (e2) {}
+    }
+  }
+
+  // 4. Update local user record
+  try {
+    localSet('presence:' + currentUser.email, presenceData);
+    localSet('users:' + currentUser.email, currentUser);
+  } catch (e) {}
+}
+
+function startRealtimePresenceListener() {
+  if (presenceFirestoreUnsub) {
+    try { presenceFirestoreUnsub(); } catch (e) {}
+    presenceFirestoreUnsub = null;
+  }
+
+  if (fbDb) {
+    try {
+      const docRef = fbDb.collection('clariq').doc('presence_registry');
+      presenceFirestoreUnsub = docRef.onSnapshot((doc) => {
+        if (doc && doc.exists) {
+          const data = doc.data() || {};
+          for (const [k, v] of Object.entries(data)) {
+            if (v && typeof v === 'object' && v.email) {
+              globalPresenceMap[k] = { ...globalPresenceMap[k], ...v };
+            }
+          }
+          triggerLivePresenceUIUpdate();
+        }
+      }, (err) => {
+        console.warn('[CLARIQ Presence Listener]:', err);
+      });
+    } catch (e) {
+      console.warn('[CLARIQ Presence Listener Error]:', e);
+    }
+  }
+
+  if (presenceEvaluationTimer) clearInterval(presenceEvaluationTimer);
+  presenceEvaluationTimer = setInterval(() => {
+    triggerLivePresenceUIUpdate();
+  }, 10000);
+}
 
 function initPresenceHeartbeat() {
-  setInterval(async () => {
-    if (document.hidden) return; // Skip background tabs
+  if (presenceHeartbeatInterval) {
+    clearInterval(presenceHeartbeatInterval);
+    presenceHeartbeatInterval = null;
+  }
+
+  // Send initial presence write if user is logged in
+  if (currentUser && currentUser.email) {
+    updateUserPresence('online');
+  }
+
+  // Attach real-time listener
+  startRealtimePresenceListener();
+
+  // Set lightweight background heartbeat interval
+  presenceHeartbeatInterval = setInterval(async () => {
+    if (document.hidden) return; // Skip background tabs to save battery & reads
     if (!currentUser || !currentUser.email) return;
 
     const now = Date.now();
-    if (now - lastPresenceWriteTime < 120000) return; // Throttle to every 2 minutes
+    if (now - lastPresenceHeartbeatTime < 15000) return; // Minimum throttle 15s
 
     try {
-      currentUser.lastActive = now;
-      await dbSet(`users:${currentUser.email}`, currentUser, true);
-      lastPresenceWriteTime = now;
+      await updateUserPresence('online');
     } catch (e) {}
-  }, 60000);
+  }, PRESENCE_HEARTBEAT_INTERVAL_MS);
+
+  // Tab visibility changes
+  document.addEventListener('visibilitychange', () => {
+    if (!currentUser || !currentUser.email) return;
+    if (document.visibilityState === 'visible') {
+      updateUserPresence('online');
+    } else {
+      lastPresenceHeartbeatTime = Date.now();
+    }
+  });
+
+  // User activity pulse
+  const pulseOnInteraction = () => {
+    if (!currentUser || !currentUser.email) return;
+    if (document.hidden) return;
+    const now = Date.now();
+    if (now - lastPresenceHeartbeatTime > 30000) {
+      updateUserPresence('online');
+    }
+  };
+  window.addEventListener('click', pulseOnInteraction, { passive: true });
+  window.addEventListener('keydown', pulseOnInteraction, { passive: true });
+
+  // Disconnect / exit hooks
+  const handleAppExit = () => {
+    if (!currentUser || !currentUser.email) return;
+    try {
+      const safeEmail = typeof firestoreSafeKey === 'function' ? firestoreSafeKey(currentUser.email.toLowerCase().trim()) : currentUser.email.replace(/[^a-zA-Z0-9_-]/g, '_');
+      if (fbDb) {
+        fbDb.collection('clariq').doc('presence_registry').set({
+          [safeEmail]: {
+            email: currentUser.email.toLowerCase().trim(),
+            name: currentUser.name || '',
+            role: currentUser.role || 'student',
+            photoUrl: currentUser.photoUrl || currentUser.avatar || null,
+            state: 'offline',
+            lastActive: Date.now()
+          }
+        }, { merge: true });
+      }
+    } catch (e) {}
+  };
+  window.addEventListener('beforeunload', handleAppExit);
+  window.addEventListener('pagehide', handleAppExit);
+
+  // Network state listeners
+  window.addEventListener('offline', () => {
+    if (currentUser && currentUser.email) {
+      const safeEmail = typeof firestoreSafeKey === 'function' ? firestoreSafeKey(currentUser.email.toLowerCase().trim()) : currentUser.email.replace(/[^a-zA-Z0-9_-]/g, '_');
+      if (globalPresenceMap[safeEmail]) {
+        globalPresenceMap[safeEmail].state = 'offline';
+      }
+      triggerLivePresenceUIUpdate();
+    }
+  });
+  window.addEventListener('online', () => {
+    if (currentUser && currentUser.email) {
+      updateUserPresence('online');
+    }
+  });
 }
 
-function formatPresence(timestamp) {
-  if (!timestamp) return { online: false, text: 'Offline', dotClass: 'offline' };
-  const diff = Date.now() - timestamp;
-  if (diff < 180000) return { online: true, text: 'Active Now', dotClass: 'online' }; // 3 minutes window
-  if (diff < 3600000) return { online: false, text: `Active ${Math.floor(diff/60000)}m ago`, dotClass: 'offline' };
-  return { online: false, text: 'Offline', dotClass: 'offline' };
+async function getCurrentlyActiveStudents(options = {}) {
+  const { excludeSelf = false, roleFilter = null, maxCount = 50 } = options;
+  const now = Date.now();
+  const directoryMembers = typeof getStudentDirectoryMembers === 'function' ? await getStudentDirectoryMembers() : [];
+  
+  const activeList = [];
+  const processedEmails = new Set();
+
+  // 1. Check entries in globalPresenceMap
+  for (const [key, p] of Object.entries(globalPresenceMap)) {
+    if (!p || !p.email) continue;
+    const email = p.email.toLowerCase().trim();
+    if (processedEmails.has(email)) continue;
+
+    if (isStudentOnline(p)) {
+      processedEmails.add(email);
+      const dirInfo = directoryMembers.find(m => m.email && m.email.toLowerCase() === email) || {};
+      activeList.push({
+        ...dirInfo,
+        ...p,
+        email: email,
+        name: p.name || dirInfo.name || email.split('@')[0],
+        role: p.role || dirInfo.role || 'student',
+        photoUrl: p.photoUrl || p.avatar || dirInfo.photoUrl || dirInfo.avatar || null,
+        avatar: p.avatar || p.photoUrl || dirInfo.avatar || dirInfo.photoUrl || null,
+        country: p.country || dirInfo.country || 'Nigeria',
+        streakDays: dirInfo.streakDays || 7,
+        xp: dirInfo.xp || 150,
+        lastActive: p.lastActive || now
+      });
+    }
+  }
+
+  // 2. Also check directory members with recent timestamps
+  for (const m of directoryMembers) {
+    if (!m || !m.email) continue;
+    const email = m.email.toLowerCase().trim();
+    if (processedEmails.has(email)) continue;
+
+    const safeEmail = typeof firestoreSafeKey === 'function' ? firestoreSafeKey(email) : email.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const pres = globalPresenceMap[safeEmail];
+    if (pres && isStudentOnline(pres)) {
+      processedEmails.add(email);
+      activeList.push({
+        ...m,
+        ...pres,
+        email: email,
+        name: m.name || pres.name || email.split('@')[0],
+        lastActive: pres.lastActive
+      });
+    } else if (!pres && m.lastActive && (now - m.lastActive <= PRESENCE_ACTIVE_TIMEOUT_MS)) {
+      processedEmails.add(email);
+      activeList.push({
+        ...m,
+        email: email,
+        lastActive: m.lastActive
+      });
+    }
+  }
+
+  let result = activeList;
+  if (excludeSelf && currentUser && currentUser.email) {
+    const myEmail = currentUser.email.toLowerCase().trim();
+    result = result.filter(u => u.email.toLowerCase().trim() !== myEmail);
+  }
+
+  if (roleFilter === 'student') {
+    result = result.filter(u => u.role !== 'admin');
+  }
+
+  result.sort((a, b) => (b.lastActive || 0) - (a.lastActive || 0));
+  return result.slice(0, maxCount);
+}
+
+async function triggerLivePresenceUIUpdate() {
+  // Update header presence dot
+  const headerDot = document.getElementById('dash-presence-dot');
+  if (headerDot) {
+    const isOnline = navigator.onLine && (!currentUser || isStudentOnline(globalPresenceMap[typeof firestoreSafeKey === 'function' ? firestoreSafeKey(currentUser.email) : currentUser.email.replace(/[^a-zA-Z0-9_-]/g, '_')]));
+    headerDot.className = `presence-dot ${isOnline ? 'online' : 'offline'}`;
+    headerDot.title = isOnline ? 'Connected to CLARIQ Real-Time Network' : 'Offline';
+  }
+
+  // If on student dashboard, re-render active peers widget
+  const studentWidget = document.getElementById('dash-active-learners-widget');
+  if (studentWidget) {
+    renderStudentActivePeersWidget();
+  }
+
+  // If on admin dashboard, re-render admin active students widget & stat badge
+  const adminActiveContainer = document.getElementById('admin-active-students-container');
+  if (adminActiveContainer) {
+    renderAdminActiveStudentsWidget();
+  }
+
+  // Update Admin "Active Today" stat card
+  const adminActiveTodayEl = document.getElementById('admin-active-today');
+  if (adminActiveTodayEl) {
+    const activeStudents = await getCurrentlyActiveStudents({ roleFilter: 'student' });
+    adminActiveTodayEl.textContent = Math.max(activeStudents.length, 1);
+  }
+
+  // If in direct messaging view, update user list presence indicators
+  if (typeof currentView !== 'undefined' && currentView === 'messages') {
+    updateMessagingPresenceDots();
+  }
+}
+
+async function renderStudentActivePeersWidget() {
+  const container = document.getElementById('dash-active-learners-widget');
+  const badgeEl = document.getElementById('dash-active-peers-badge');
+  if (!container) return;
+
+  const activePeers = await getCurrentlyActiveStudents({ excludeSelf: true, roleFilter: 'student', maxCount: 6 });
+
+  if (badgeEl) {
+    badgeEl.innerHTML = activePeers.length > 0 
+      ? `🟢 ${activePeers.length} Peer${activePeers.length === 1 ? '' : 's'} Online Now` 
+      : `🟢 You are Online`;
+  }
+
+  if (activePeers.length === 0) {
+    container.innerHTML = `
+      <div style="padding:20px;text-align:center;background:var(--bg-app);border:1px dashed var(--border);border-radius:14px;grid-column:1/-1;">
+        <div style="font-size:24px;margin-bottom:6px;">🚀</div>
+        <b style="font-size:13.5px;color:var(--text-1);display:block;margin-bottom:4px;">You're currently leading the study session!</b>
+        <p style="font-size:12px;color:var(--text-2);margin:0 0 12px 0;">No other peers are online at this exact moment. Send a direct message or invite study group partners.</p>
+        <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="goTo('messages')" style="font-size:12px;padding:6px 12px;">💬 Open Messages</button>
+          <button class="btn btn-outline btn-sm" onclick="goTo('directory')" style="font-size:12px;padding:6px 12px;">👥 Browse Directory</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:12px;width:100%;">
+      ${activePeers.map(peer => {
+        const safeName = escapeHtml(peer.name || peer.email.split('@')[0]);
+        const sanitizedEmail = escapeHtml(peer.email);
+        const jsName = (peer.name || peer.email.split('@')[0]).replace(/'/g, "\\'");
+        const jsEmail = peer.email.replace(/'/g, "\\'");
+        const course = escapeHtml(peer.currentCourse || 'Meta Ads Mastery');
+
+        return `
+          <div class="active-peer-card" onclick="openChatWithUser('${jsEmail}', '${jsName}')" style="cursor:pointer;" title="Click to start Direct Message with ${safeName}">
+            <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
+              <div style="position:relative;flex-shrink:0;">
+                ${typeof renderUserAvatar === 'function' ? renderUserAvatar(peer, 42) : `<div class="avatar" style="width:42px;height:42px;">${initials(peer.name)}</div>`}
+                <span class="presence-dot online" style="position:absolute;bottom:0;right:0;border:2px solid #fff;"></span>
+              </div>
+              <div style="min-width:0;flex:1;">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+                  <b style="font-size:13.5px;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">${safeName}</b>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  <span style="color:#16a34a;font-weight:700;display:inline-flex;align-items:center;gap:3px;">🟢 Active now</span>
+                  <span>•</span>
+                  <span style="overflow:hidden;text-overflow:ellipsis;">${course}</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openChatWithUser('${jsEmail}', '${jsName}')" style="flex-shrink:0;display:inline-flex;align-items:center;gap:4px;font-size:11.5px;padding:6px 12px;border-radius:8px;font-weight:700;">
+              💬 DM
+            </button>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+async function renderAdminActiveStudentsWidget() {
+  const container = document.getElementById('admin-active-students-container');
+  const badgeEl = document.getElementById('admin-active-students-badge');
+  if (!container) return;
+
+  const activeStudents = await getCurrentlyActiveStudents({ roleFilter: null, maxCount: 30 });
+
+  if (badgeEl) {
+    badgeEl.innerHTML = `🟢 ${activeStudents.length} Active User${activeStudents.length === 1 ? '' : 's'} Now`;
+  }
+
+  if (activeStudents.length === 0) {
+    container.innerHTML = `
+      <div style="padding:28px 20px;text-align:center;color:var(--text-2);background:var(--bg-app);border-radius:12px;border:1px dashed var(--border);">
+        <div style="font-size:24px;margin-bottom:8px;">📡</div>
+        <b style="font-size:14px;color:var(--text-1);display:block;margin-bottom:4px;">No other active student sessions detected</b>
+        <p style="font-size:12.5px;margin:0;">Real-time presence updates automatically via Firebase heartbeats whenever students log in or study.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(310px, 1fr));gap:12px;">
+      ${activeStudents.map(u => {
+        const safeName = escapeHtml(u.name || u.email.split('@')[0]);
+        const safeEmail = escapeHtml(u.email);
+        const jsName = (u.name || u.email.split('@')[0]).replace(/'/g, "\\'");
+        const jsEmail = u.email.replace(/'/g, "\\'");
+        const isSelf = currentUser && currentUser.email && currentUser.email.toLowerCase() === u.email.toLowerCase();
+        const course = escapeHtml(u.currentCourse || 'Meta Ads Mastery');
+        const roleLabel = u.role === 'admin' ? '👑 Admin' : '🎓 Student';
+
+        return `
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:12px;background:var(--bg-app);border:1px solid var(--border);transition:transform .15s ease;">
+            <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+              <div style="position:relative;flex-shrink:0;">
+                ${typeof renderUserAvatar === 'function' ? renderUserAvatar(u, 40) : `<div class="avatar" style="width:40px;height:40px;">${initials(u.name)}</div>`}
+                <span class="presence-dot online" style="position:absolute;bottom:0;right:0;border:2px solid #fff;"></span>
+              </div>
+              <div style="min-width:0;flex:1;">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+                  <b style="font-size:13px;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${safeName}</b>
+                  ${isSelf ? '<span class="badge-tag" style="background:#e0f2fe;color:#0369a1;font-size:10px;padding:1px 5px;">You</span>' : ''}
+                </div>
+                <div style="font-size:11px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  <span style="color:#15803d;font-weight:700;">🟢 Active now</span> • <span>${roleLabel}</span> • <span>${course}</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+              <button class="btn btn-outline btn-sm" onclick="openStudentProfileModal('${jsEmail}')" style="font-size:11px;padding:5px 8px;border-radius:6px;" title="View Student Profile">
+                📋 Inspect
+              </button>
+              ${!isSelf ? `
+                <button class="btn btn-primary btn-sm" onclick="openChatWithUser('${jsEmail}', '${jsName}')" style="font-size:11px;padding:5px 8px;border-radius:6px;font-weight:700;" title="Send Direct Message">
+                  💬 DM
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function refreshLivePresenceData(notifyUser = false) {
+  if (currentUser && currentUser.email) {
+    updateUserPresence('online');
+  } else {
+    triggerLivePresenceUIUpdate();
+  }
+  if (notifyUser && typeof toast === 'function') {
+    toast('Live presence data synchronized! 🟢');
+  }
+}
+
+function updateMessagingPresenceDots() {
+  const userItems = document.querySelectorAll('#msg-user-list .active-member-item');
+  userItems.forEach(item => {
+    const emailAttr = item.getAttribute('data-email');
+    if (emailAttr) {
+      const presence = formatPresence(emailAttr);
+      const dot = item.querySelector('.presence-dot');
+      if (dot) {
+        dot.className = `presence-dot ${presence.dotClass}`;
+      }
+    }
+  });
+}
+
+function renderActiveMembersWidget() {
+  renderStudentActivePeersWidget();
 }
 
 // ---------------- 1. DYNAMIC COURSE MANAGEMENT ----------------
@@ -12335,74 +13348,124 @@ function switchLeaderboardCategory(cat) {
 }
 
 async function renderLeaderboardView() {
-  const members = await getStudentDirectoryMembers();
+  const allPerformanceData = await getAllStudentsPerformanceData();
+  let sorted = [...allPerformanceData];
   
-  // Sort according to category
-  let sorted = [...members];
-  if (currentLeaderboardCategory === 'DAILY') sorted.sort((a,b) => (b.xp || 0) - (a.xp || 0));
-  if (currentLeaderboardCategory === 'WEEKLY') sorted.sort((a,b) => ((b.xp || 0) * 1.5) - ((a.xp || 0) * 1.5));
-  if (currentLeaderboardCategory === 'MONTHLY') sorted.sort((a,b) => ((b.xp || 0) * 3) - ((a.xp || 0) * 3));
-  if (currentLeaderboardCategory === 'ASSIGNMENTS') sorted.sort((a,b) => (b.level || 1) - (a.level || 1));
-  if (currentLeaderboardCategory === 'QUIZ') sorted.sort((a,b) => (b.xp || 0) - (a.xp || 0));
-  if (currentLeaderboardCategory === 'STREAK') sorted.sort((a,b) => (b.streakDays || 0) - (a.streakDays || 0));
+  // Sort according to category using consistent deterministic tie-breakers
+  if (currentLeaderboardCategory === 'DAILY' || currentLeaderboardCategory === 'WEEKLY' || currentLeaderboardCategory === 'MONTHLY') {
+    sorted.sort(compareStudentPerformance);
+  } else if (currentLeaderboardCategory === 'ASSIGNMENTS') {
+    sorted.sort((a,b) => {
+      if (b.assignmentsSubmitted !== a.assignmentsSubmitted) return b.assignmentsSubmitted - a.assignmentsSubmitted;
+      if (b.certificatesCount !== a.certificatesCount) return b.certificatesCount - a.certificatesCount;
+      return compareStudentPerformance(a, b);
+    });
+  } else if (currentLeaderboardCategory === 'QUIZ') {
+    sorted.sort((a,b) => {
+      if (b.quizXP !== a.quizXP) return b.quizXP - a.quizXP;
+      return compareStudentPerformance(a, b);
+    });
+  } else if (currentLeaderboardCategory === 'STREAK') {
+    sorted.sort((a,b) => {
+      if (b.streakDays !== a.streakDays) return b.streakDays - a.streakDays;
+      if (b.totalActiveSeconds !== a.totalActiveSeconds) return b.totalActiveSeconds - a.totalActiveSeconds;
+      return compareStudentPerformance(a, b);
+    });
+  }
+
+  // Update current user rank badge and stats if logged in
+  if (currentUser && currentUser.email) {
+    const userEmail = currentUser.email.toLowerCase().trim();
+    const userIndex = sorted.findIndex(s => s.email === userEmail);
+    const userRank = userIndex >= 0 ? userIndex + 1 : (sorted.length ? sorted.length + 1 : 1);
+    const userRecord = sorted.find(s => s.email === userEmail);
+
+    const rankBadge = document.getElementById('lb-user-rank-badge');
+    if (rankBadge) rankBadge.textContent = `Global Rank: #${userRank}`;
+
+    const xpEl = document.getElementById('lb-user-xp');
+    if (xpEl && userRecord) xpEl.textContent = `${userRecord.compositeScore.toLocaleString()} XP`;
+
+    const streakEl = document.getElementById('lb-user-streak');
+    if (streakEl && userRecord) streakEl.textContent = `${userRecord.streakDays} Days`;
+  }
 
   // Render Top 3 Podium
   const podium = document.getElementById('leaderboard-podium');
-  if (podium && sorted.length >= 3) {
+  if (podium && sorted.length >= 1) {
     const p1 = sorted[0];
-    const p2 = sorted[1];
-    const p3 = sorted[2];
+    const p2 = sorted.length > 1 ? sorted[1] : null;
+    const p3 = sorted.length > 2 ? sorted[2] : null;
 
     podium.innerHTML = `
+      ${p2 ? `
       <!-- 2nd Place Silver -->
       <div style="text-align:center;width:110px;">
-        <div style="font-size:24px;margin-bottom:2px;">2nd</div>
-        <div class="avatar" style="width:48px;height:48px;margin:0 auto 6px auto;font-size:16px;border:3px solid #94a3b8;box-shadow:0 4px 10px rgba(0,0,0,0.1);">${initials(p2.name)}</div>
-        <b style="font-size:13px;display:block;color:var(--text-1);">${p2.name.split(' ')[0]}</b>
-        <span style="font-size:11px;color:var(--accent);font-weight:700;">${p2.xp || 300} XP</span>
+        <div style="font-size:24px;margin-bottom:2px;">🥈 2nd</div>
+        <div style="position:relative;width:48px;height:48px;margin:0 auto 6px auto;">
+          ${typeof renderUserAvatar === 'function' ? renderUserAvatar(p2, 48) : `<div class="avatar" style="width:48px;height:48px;font-size:16px;border:3px solid #94a3b8;box-shadow:0 4px 10px rgba(0,0,0,0.1);">${initials(p2.name)}</div>`}
+        </div>
+        <b style="font-size:13px;display:block;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p2.name.split(' ')[0]}</b>
+        <span style="font-size:11px;color:var(--accent);font-weight:700;">${p2.compositeScore ? p2.compositeScore.toLocaleString() : (p2.quizXP || 300)} XP</span>
         <div style="height:60px;background:#cbd5e1;border-radius:10px 10px 0 0;margin-top:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#334155;">#2</div>
-      </div>
+      </div>` : ''}
 
       <!-- 1st Place Gold -->
       <div style="text-align:center;width:130px;">
-        <div style="font-size:28px;margin-bottom:2px;">1st</div>
-        <div class="avatar" style="width:62px;height:62px;margin:0 auto 6px auto;font-size:22px;border:4px solid #f59e0b;box-shadow:0 8px 16px rgba(245,158,11,0.3);">${initials(p1.name)}</div>
-        <b style="font-size:14px;display:block;color:var(--text-1);">${p1.name.split(' ')[0]}</b>
-        <span style="font-size:12px;color:#d97706;font-weight:800;">${p1.xp || 500} XP</span>
+        <div style="font-size:28px;margin-bottom:2px;">👑 1st</div>
+        <div style="position:relative;width:62px;height:62px;margin:0 auto 6px auto;">
+          ${typeof renderUserAvatar === 'function' ? renderUserAvatar(p1, 62) : `<div class="avatar" style="width:62px;height:62px;font-size:22px;border:4px solid #f59e0b;box-shadow:0 8px 16px rgba(245,158,11,0.3);">${initials(p1.name)}</div>`}
+        </div>
+        <b style="font-size:14px;display:block;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p1.name.split(' ')[0]}</b>
+        <span style="font-size:12px;color:#d97706;font-weight:800;">${p1.compositeScore ? p1.compositeScore.toLocaleString() : (p1.quizXP || 500)} XP</span>
         <div style="height:90px;background:#fde047;border-radius:12px 12px 0 0;margin-top:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#78350f;">#1</div>
       </div>
 
+      ${p3 ? `
       <!-- 3rd Place Bronze -->
       <div style="text-align:center;width:110px;">
-        <div style="font-size:24px;margin-bottom:2px;">3rd</div>
-        <div class="avatar" style="width:48px;height:48px;margin:0 auto 6px auto;font-size:16px;border:3px solid #d97706;box-shadow:0 4px 10px rgba(0,0,0,0.1);">${initials(p3.name)}</div>
-        <b style="font-size:13px;display:block;color:var(--text-1);">${p3.name.split(' ')[0]}</b>
-        <span style="font-size:11px;color:var(--accent);font-weight:700;">${p3.xp || 200} XP</span>
+        <div style="font-size:24px;margin-bottom:2px;">🥉 3rd</div>
+        <div style="position:relative;width:48px;height:48px;margin:0 auto 6px auto;">
+          ${typeof renderUserAvatar === 'function' ? renderUserAvatar(p3, 48) : `<div class="avatar" style="width:48px;height:48px;font-size:16px;border:3px solid #d97706;box-shadow:0 4px 10px rgba(0,0,0,0.1);">${initials(p3.name)}</div>`}
+        </div>
+        <b style="font-size:13px;display:block;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p3.name.split(' ')[0]}</b>
+        <span style="font-size:11px;color:var(--accent);font-weight:700;">${p3.compositeScore ? p3.compositeScore.toLocaleString() : (p3.quizXP || 200)} XP</span>
         <div style="height:45px;background:#fed7aa;border-radius:10px 10px 0 0;margin-top:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#9a3412;">#3</div>
-      </div>
+      </div>` : ''}
     `;
   }
 
   // Render Rankings Table
   const tableEl = document.getElementById('global-leaderboard-table');
   if (tableEl) {
-    tableEl.innerHTML = `
-      <div style="display:grid;grid-template-columns:50px 1fr 120px 100px 100px;padding:10px;font-size:12px;font-weight:700;color:var(--text-2);border-bottom:1px solid var(--border);">
-        <span>RANK</span><span>LEARNER</span><span>COUNTRY</span><span>STREAK</span><span>SCORE</span>
-      </div>
-      ${sorted.map((u, idx) => `
-        <div style="display:grid;grid-template-columns:50px 1fr 120px 100px 100px;padding:12px 10px;align-items:center;border-bottom:1px solid var(--border);font-size:13.5px;">
-          <b style="color:${idx===0?'#d97706':idx===1?'#475569':idx===2?'#b45309':'var(--text-1)'};">#${idx+1}</b>
-          <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="openStudentProfileModal('${u.email}')">
-            <div class="avatar" style="width:30px;height:30px;font-size:11px;">${initials(u.name)}</div>
-            <b>${u.name}</b>
-          </div>
-          <span style="font-size:12px;color:var(--text-2);">${u.country || 'Nigeria'}</span>
-          <span style="font-size:12px;font-weight:700;color:#d97706;">Streak: ${u.streakDays || 7}d</span>
-          <b style="color:var(--accent);">${u.xp || 100} XP</b>
+    if (!sorted.length) {
+      tableEl.innerHTML = `
+        <div style="padding:32px 16px;text-align:center;color:var(--text-2);">
+          <p style="font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:4px;">No registered learners yet</p>
+          <span style="font-size:12px;">Start learning and complete quizzes to take the #1 spot!</span>
+        </div>`;
+    } else {
+      tableEl.innerHTML = `
+        <div style="display:grid;grid-template-columns:50px 1fr 120px 100px 100px;padding:10px 12px;font-size:12px;font-weight:700;color:var(--text-2);border-bottom:1px solid var(--border);">
+          <span>RANK</span><span>LEARNER</span><span>COUNTRY</span><span>STREAK</span><span>SCORE</span>
         </div>
-      `).join('')}
-    `;
+        ${sorted.map((u, idx) => `
+          <div style="display:grid;grid-template-columns:50px 1fr 120px 100px 100px;padding:12px 10px;align-items:center;border-bottom:1px solid var(--border);font-size:13.5px;">
+            <b style="color:${idx===0?'#d97706':idx===1?'#475569':idx===2?'#b45309':'var(--text-1)'};">#${idx+1}</b>
+            <div style="display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;overflow:hidden;" onclick="openStudentProfileModal('${u.email}')">
+              ${typeof renderUserAvatar === 'function' ? renderUserAvatar(u, 32) : `<div class="avatar" style="width:32px;height:32px;font-size:11px;">${initials(u.name)}</div>`}
+              <div style="min-width:0;overflow:hidden;">
+                <b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(u.name)}</b>
+                <span style="font-size:11px;color:var(--text-2);">${u.overallPct}% complete</span>
+              </div>
+            </div>
+            <span style="font-size:12px;color:var(--text-2);">${escapeHtml(u.country || 'Nigeria')}</span>
+            <span style="font-size:12px;font-weight:700;color:#d97706;">🔥 ${u.streakDays || 1}d</span>
+            <b style="color:var(--accent);">${u.compositeScore ? u.compositeScore.toLocaleString() : (u.quizXP || 100)} XP</b>
+          </div>
+        `).join('')}
+      `;
+    }
   }
 
   // Render Badges
@@ -15752,7 +16815,9 @@ async function initExtraWidgets() {
   await safeRun(loadCustomAssignments, 'loadCustomAssignments');
   await safeRun(startUserUsageHeartbeat, 'startUserUsageHeartbeat');
   await safeRun(initEnterpriseLMSData, 'initEnterpriseLMSData');
-  await safeRun(renderActiveMembersWidget, 'renderActiveMembersWidget');
+  await safeRun(initPresenceHeartbeat, 'initPresenceHeartbeat');
+  await safeRun(renderStudentActivePeersWidget, 'renderStudentActivePeersWidget');
+  await safeRun(renderAdminActiveStudentsWidget, 'renderAdminActiveStudentsWidget');
   await safeRun(renderDashboardAIRecommendations, 'renderDashboardAIRecommendations');
   await safeRun(renderBadgesGallery, 'renderBadgesGallery');
   await safeRun(renderCalendar, 'renderCalendar');
@@ -15760,6 +16825,7 @@ async function initExtraWidgets() {
   await safeRun(renderWeeklyLearningProgram, 'renderWeeklyLearningProgram');
   await safeRun(renderDashboardBirthdayBanner, 'renderDashboardBirthdayBanner');
   await safeRun(renderCelebratingMembersWidget, 'renderCelebratingMembersWidget');
+  await safeRun(renderAdminLeaderboard, 'renderAdminLeaderboard');
   await safeRun(renderAdminBirthdayCountdown, 'renderAdminBirthdayCountdown');
   await safeRun(renderAdminStudentUsageInspection, 'renderAdminStudentUsageInspection');
   refreshLucideIcons();
