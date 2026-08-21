@@ -2758,13 +2758,16 @@
       <!-- ===== ADMIN: STUDENTS ===== -->
       <section class="view" id="view-admin-students">
         <div class="topbar">
-          <div><div class="page-title">Students</div><div class="page-sub">Everyone registered on CLARIQ</div></div>
+          <div><div class="page-title">Students</div><div class="page-sub">Comprehensive Firebase & Firestore directory of all registered learners</div></div>
           <div class="topbar-actions">
+            <button class="btn btn-primary btn-sm" id="btn-admin-sync-firebase" onclick="manualAdminSyncStudents()" style="display:flex;align-items:center;gap:6px;">
+              <span id="admin-sync-icon">🔄</span> Sync from Firebase
+            </button>
             <button class="btn btn-outline btn-sm" onclick="exportStudentsCSV()">Export CSV</button>
             <div class="avatar dash-avatar-mirror">A</div>
           </div>
         </div>
-        <div class="card"><div id="admin-students-list"></div></div>
+        <div class="card" style="padding:0;overflow:hidden;border:none;background:transparent;"><div id="admin-students-list"></div></div>
       </section>
 
       <!-- ===== ADMIN: LIVE CLASSES / ATTENDANCE ===== -->
@@ -5044,12 +5047,51 @@ function togglePasswordVisibility(inputId, buttonEl){
   buttonEl.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
 }
 
-async function addToUserIndex(email){
+async function addToUserIndex(userOrEmail){
+  if (!userOrEmail) return;
+  const email = (typeof userOrEmail === 'string' ? userOrEmail : (userOrEmail.email || '')).trim().toLowerCase();
+  if (!email || !email.includes('@')) return;
+
+  const currentFbUid = (fbAuth && fbAuth.currentUser && fbAuth.currentUser.email && fbAuth.currentUser.email.toLowerCase() === email) ? fbAuth.currentUser.uid : null;
+  const uid = (typeof userOrEmail === 'object' && userOrEmail ? userOrEmail.uid : null) || currentFbUid;
+  const name = (typeof userOrEmail === 'object' && userOrEmail ? userOrEmail.name : null) || '';
+  const role = (typeof userOrEmail === 'object' && userOrEmail ? userOrEmail.role : null) || 'student';
+  const phone = (typeof userOrEmail === 'object' && userOrEmail ? userOrEmail.phone : null) || '';
+  const dob = (typeof userOrEmail === 'object' && userOrEmail ? userOrEmail.dob : null) || '';
+  const status = (typeof userOrEmail === 'object' && userOrEmail ? userOrEmail.status : null) || 'active';
+  const createdAt = (typeof userOrEmail === 'object' && userOrEmail ? userOrEmail.createdAt : null) || new Date().toISOString();
+
   const idx = (await dbGet('user-index', true)) || [];
-  if(!idx.includes(email)){
-    idx.push(email);
-    await dbSet('user-index', idx, true);
+  let found = false;
+  const newIdx = idx.map(item => {
+    const itemEmail = (typeof item === 'string' ? item : (item ? item.email : '')).trim().toLowerCase();
+    if (itemEmail === email) {
+      found = true;
+      if (typeof item === 'object' && item) {
+        return {
+          ...item,
+          email,
+          uid: uid || item.uid || null,
+          name: (name && name !== email.split('@')[0]) ? name : (item.name || name || email.split('@')[0]),
+          role: role || item.role || 'student',
+          phone: phone || item.phone || '',
+          dob: dob || item.dob || '',
+          status: status || item.status || 'active',
+          createdAt: item.createdAt || createdAt
+        };
+      }
+      return { email, uid, name: name || email.split('@')[0], role, phone, dob, status, createdAt };
+    }
+    return item;
+  });
+
+  if (!found) {
+    newIdx.push({ email, uid, name: name || email.split('@')[0], role, phone, dob, status, createdAt });
   }
+
+  await dbSet('user-index', newIdx, true);
+  if (typeof invalidateStudentsCache === 'function') invalidateStudentsCache();
+  if (typeof invalidateDirectoryCache === 'function') invalidateDirectoryCache();
 }
 
 let isAuthSubmitting = false;
@@ -5094,16 +5136,20 @@ async function doSignup(){
       }
     }
 
+    const uid = (cred && cred.user) ? cred.user.uid : null;
     const newUser = {
       name,
       email,
+      uid,
       phone,
       dob,
       role: 'student',
+      status: 'active',
+      authMethod: 'email',
       createdAt: new Date().toISOString()
     };
     await dbSet('users:' + email, newUser, true);
-    await addToUserIndex(email);
+    await addToUserIndex(newUser);
     await loginAs(email, newUser);
     toast(`Welcome to CLARIQ, ${name}! 🎉`);
   }catch(e){
@@ -5239,16 +5285,20 @@ async function submitGoogleCompletion() {
   showFieldError('google-complete-error', '');
 
   try {
+    const fbUid = (fbAuth && fbAuth.currentUser) ? fbAuth.currentUser.uid : (pendingGoogleUser.uid || null);
     const userRecord = {
       ...pendingGoogleUser,
+      uid: fbUid,
+      authMethod: 'google',
       phone: phone,
       dob: dob,
       role: 'student',
+      status: 'active',
       updatedAt: new Date().toISOString()
     };
 
     await dbSet('users:' + pendingGoogleUser.email, userRecord, true);
-    await addToUserIndex(pendingGoogleUser.email);
+    await addToUserIndex(userRecord);
 
     const modal = document.getElementById('google-completion-modal');
     if (modal) modal.style.display = 'none';
@@ -5541,9 +5591,18 @@ async function doAdminSignup(){
       }
     }
 
-    const newAdmin = {name, email, role:'admin', createdAt: new Date().toISOString()};
+    const uid = (cred && cred.user) ? cred.user.uid : null;
+    const newAdmin = {
+      name,
+      email,
+      uid,
+      role: 'admin',
+      status: 'active',
+      authMethod: 'email',
+      createdAt: new Date().toISOString()
+    };
     await dbSet('users:' + email, newAdmin, true);
-    await addToUserIndex(email);
+    await addToUserIndex(newAdmin);
     await loginAs(email, newAdmin);
   }catch(e){
     console.error('[CLARIQ Admin Signup Error]', e);
@@ -5557,17 +5616,30 @@ async function doAdminSignup(){
 async function loginAs(email, knownUser){
   const cleanEmail = (email || '').trim().toLowerCase();
   let user = knownUser || await dbGet('users:' + cleanEmail, true);
-  if(!user && fbAuth && fbAuth.currentUser && fbAuth.currentUser.email && fbAuth.currentUser.email.toLowerCase() === cleanEmail){
+  const fbUser = (fbAuth && fbAuth.currentUser && fbAuth.currentUser.email && fbAuth.currentUser.email.toLowerCase() === cleanEmail) ? fbAuth.currentUser : null;
+  const currentUid = fbUser ? fbUser.uid : (user ? user.uid : null);
+
+  if(!user && fbUser){
     user = {
-      name: fbAuth.currentUser.displayName || cleanEmail.split('@')[0],
+      name: fbUser.displayName || cleanEmail.split('@')[0],
       email: cleanEmail,
+      uid: currentUid,
       phone: '',
+      dob: '',
       role: 'student',
+      status: 'active',
+      authMethod: fbUser.providerData && fbUser.providerData.some(p => p.providerId === 'google.com') ? 'google' : 'email',
       createdAt: new Date().toISOString()
     };
     await dbSet('users:' + cleanEmail, user, true);
-    await addToUserIndex(cleanEmail);
+    await addToUserIndex(user);
+  } else if (user && currentUid && (!user.uid || user.uid !== currentUid)) {
+    user.uid = currentUid;
+    user.updatedAt = new Date().toISOString();
+    await dbSet('users:' + cleanEmail, user, true);
+    await addToUserIndex(user);
   }
+
   if(!user){
     toast('Something went wrong signing you in. Please try again.');
     return;
@@ -5661,12 +5733,20 @@ async function boot(){
           user = {
             name: fbUser.displayName || email.split('@')[0],
             email: email,
+            uid: fbUser.uid,
             phone: '',
+            dob: '',
             role: 'student',
+            status: 'active',
+            authMethod: fbUser.providerData && fbUser.providerData.some(p => p.providerId === 'google.com') ? 'google' : 'email',
             createdAt: new Date().toISOString()
           };
           await dbSet('users:' + email, user, true);
-          await addToUserIndex(email);
+          await addToUserIndex(user);
+        } else if (!user.uid || user.uid !== fbUser.uid) {
+          user.uid = fbUser.uid;
+          await dbSet('users:' + email, user, true);
+          await addToUserIndex(user);
         }
         if(user){
           currentUser = user;
@@ -7727,12 +7807,273 @@ function showAdminApp(){
   goTo('admin-dashboard');
 }
 
-async function loadAllStudents(){
-  const items = (await dbGet('user-index', true)) || [];
-  const emails = items.map(x => typeof x === 'string' ? x : (x ? x.email : null)).filter(Boolean);
-  
-  const rawUsers = await Promise.all(emails.map(email => dbGet('users:' + email, true)));
-  return rawUsers.filter(u => u && (u.role === 'student' || !u.role || u.role === 'Learner'));
+/* ================================================================
+   COMPREHENSIVE FIREBASE & FIRESTORE STUDENT SYNCHRONIZATION ENGINE
+   ================================================================ */
+let cachedAllStudents = null;
+let cachedAllStudentsTime = 0;
+const STUDENTS_CACHE_TTL = 15000;
+
+function invalidateStudentsCache() {
+  cachedAllStudents = null;
+  cachedAllStudentsTime = 0;
+  if (typeof invalidateDirectoryCache === 'function') invalidateDirectoryCache();
+}
+
+function normalizeUserEmail(email) {
+  if (!email || typeof email !== 'string') return '';
+  return email.trim().toLowerCase();
+}
+
+function isDemoOrAdminEmail(email) {
+  const e = normalizeUserEmail(email);
+  return e === 'demo@clariq.app' || e === 'admin@clariq.app';
+}
+
+async function copyTextToClipboard(text, label = 'Copied') {
+  if (!text) return;
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand('copy');
+      textArea.remove();
+    }
+    toast(`${label} to clipboard! 📋`);
+  } catch (err) {
+    console.warn('Clipboard copy fallback error:', err);
+    toast(`${text}`);
+  }
+}
+
+async function syncAllStudentsFromFirebase(forceRefresh = false) {
+  const now = Date.now();
+  if (!forceRefresh && cachedAllStudents && (now - cachedAllStudentsTime < STUDENTS_CACHE_TTL)) {
+    return cachedAllStudents;
+  }
+
+  ensureFirebaseInitialized();
+
+  // Map keyed by canonical lowercase email to merge data without loss
+  const userMap = new Map();
+
+  function mergeUserRecord(record, source = 'unknown') {
+    if (!record) return;
+    const email = normalizeUserEmail(record.email);
+    if (!email || !email.includes('@')) return;
+    if (isDemoOrAdminEmail(email)) return;
+
+    const existing = userMap.get(email) || {};
+
+    const cleanName = (record.name && record.name !== 'Learner' && record.name !== email.split('@')[0])
+      ? record.name
+      : (existing.name || record.name || email.split('@')[0]);
+
+    const isGoogle = record.authMethod === 'google' || existing.authMethod === 'google' ||
+      (record.photoUrl && record.photoUrl.includes('google')) || (existing.photoUrl && existing.photoUrl.includes('google'));
+
+    const merged = {
+      ...existing,
+      ...record,
+      email: email,
+      uid: record.uid || existing.uid || null,
+      name: cleanName,
+      phone: record.phone || existing.phone || '',
+      dob: record.dob || existing.dob || '',
+      role: (record.role === 'admin' || existing.role === 'admin') ? 'admin' : (record.role || existing.role || 'student'),
+      status: record.status || existing.status || 'active',
+      bio: (record.bio && record.bio.length > 5) ? record.bio : (existing.bio || record.bio || ''),
+      skills: (Array.isArray(record.skills) && record.skills.length)
+        ? Array.from(new Set([...(existing.skills || []), ...record.skills]))
+        : (existing.skills || []),
+      interests: (Array.isArray(record.interests) && record.interests.length)
+        ? Array.from(new Set([...(existing.interests || []), ...record.interests]))
+        : (existing.interests || []),
+      university: record.university || record.org || record.organization || existing.university || existing.org || '',
+      country: record.country || record.location || existing.country || 'Nigeria',
+      photoUrl: record.photoUrl || record.avatar || existing.photoUrl || existing.avatar || '',
+      avatar: record.avatar || record.photoUrl || existing.avatar || existing.photoUrl || '',
+      linkedin: record.linkedin || existing.linkedin || '',
+      portfolio: record.portfolio || existing.portfolio || '',
+      twitter: record.twitter || existing.twitter || '',
+      github: record.github || existing.github || '',
+      authMethod: isGoogle ? 'google' : (record.authMethod || existing.authMethod || 'email'),
+      createdAt: existing.createdAt || record.createdAt || new Date().toISOString(),
+      updatedAt: record.updatedAt || existing.updatedAt || new Date().toISOString()
+    };
+
+    userMap.set(email, merged);
+  }
+
+  // 1. Firebase Auth Current User (if logged in)
+  if (fbAuth && fbAuth.currentUser && fbAuth.currentUser.email) {
+    const fbUser = fbAuth.currentUser;
+    mergeUserRecord({
+      email: fbUser.email,
+      uid: fbUser.uid,
+      name: fbUser.displayName || '',
+      photoUrl: fbUser.photoURL || '',
+      avatar: fbUser.photoURL || '',
+      authMethod: fbUser.providerData && fbUser.providerData.some(p => p.providerId === 'google.com') ? 'google' : 'email'
+    }, 'firebaseAuthCurrentUser');
+  }
+
+  // 2. Load stored user-index
+  try {
+    const rawIndex = (await dbGet('user-index', true)) || [];
+    if (Array.isArray(rawIndex)) {
+      for (const item of rawIndex) {
+        if (typeof item === 'string') {
+          mergeUserRecord({ email: item }, 'userIndexString');
+        } else if (item && typeof item === 'object') {
+          mergeUserRecord(item, 'userIndexObject');
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[CLARIQ Sync] user-index load error:', e);
+  }
+
+  // 3. Scan Firestore 'clariq' collection (All user docs, progress, assignments, etc.)
+  if (fbDb) {
+    try {
+      const snap = await fbDb.collection('clariq').get();
+      if (snap && !snap.empty) {
+        snap.forEach(doc => {
+          const docId = doc.id;
+          const data = doc.data() || {};
+          let val = data.value;
+          if (typeof val === 'string') {
+            try { val = JSON.parse(val); } catch (e) {}
+          }
+
+          if (docId.startsWith('users:') || docId.startsWith('users_')) {
+            const rawEmail = docId.replace(/^users[:_]/, '');
+            if (val && typeof val === 'object') {
+              mergeUserRecord({ ...val, email: val.email || rawEmail }, 'clariqUsersDoc');
+            } else if (rawEmail.includes('@')) {
+              mergeUserRecord({ email: rawEmail }, 'clariqUsersDocId');
+            }
+          } else if (docId === 'user-index' || docId === 'user_index') {
+            if (Array.isArray(val)) {
+              val.forEach(item => {
+                if (typeof item === 'string') mergeUserRecord({ email: item }, 'clariqUserIndexDoc');
+                else if (item && typeof item === 'object') mergeUserRecord(item, 'clariqUserIndexDoc');
+              });
+            }
+          } else if (/^(progress|assignments|streak|notifications|certificates|attendance|chat|portfolio|settings)[:_]/.test(docId)) {
+            const emailPart = docId.replace(/^(progress|assignments|streak|notifications|certificates|attendance|chat|portfolio|settings)[:_]/, '');
+            if (emailPart && emailPart.includes('@')) {
+              mergeUserRecord({ email: emailPart }, 'clariqActivityDoc');
+            }
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('[CLARIQ Sync] Firestore clariq collection scan warning:', e);
+    }
+
+    // 4. Scan alternative top-level collections if present
+    const alternativeCollections = ['users', 'students', 'profiles'];
+    for (const colName of alternativeCollections) {
+      try {
+        const colSnap = await fbDb.collection(colName).get();
+        if (colSnap && !colSnap.empty) {
+          colSnap.forEach(doc => {
+            const d = doc.data() || {};
+            const em = d.email || doc.id;
+            if (em && em.includes('@')) {
+              mergeUserRecord({ ...d, email: em, uid: d.uid || doc.id }, `topLevel_${colName}`);
+            }
+          });
+        }
+      } catch (colErr) {}
+    }
+  }
+
+  // 5. Hydrate missing profile details for all discovered emails
+  const emails = Array.from(userMap.keys());
+  await Promise.all(emails.map(async (email) => {
+    try {
+      const existingRecord = userMap.get(email);
+      if (!existingRecord.name || existingRecord.name === email.split('@')[0] || !existingRecord.phone || !existingRecord.dob) {
+        const fullDoc = await dbGet('users:' + email, true);
+        if (fullDoc && typeof fullDoc === 'object') {
+          mergeUserRecord(fullDoc, 'hydratedUsersDoc');
+        }
+      }
+    } catch (err) {}
+  }));
+
+  // 6. Safe self-healing persistence
+  const allUsersList = Array.from(userMap.values());
+  const indexEntries = [];
+
+  for (const u of allUsersList) {
+    const email = u.email;
+    indexEntries.push({
+      email: u.email,
+      uid: u.uid || null,
+      name: u.name || email.split('@')[0],
+      role: u.role || 'student',
+      phone: u.phone || '',
+      dob: u.dob || '',
+      status: u.status || 'active',
+      createdAt: u.createdAt
+    });
+
+    try {
+      const cached = localGet('users:' + email);
+      if (!cached) {
+        await dbSet('users:' + email, u, true);
+      }
+    } catch (e) {}
+  }
+
+  if (indexEntries.length > 0) {
+    try {
+      await dbSet('user-index', indexEntries, true);
+    } catch (e) {}
+  }
+
+  const studentsOnly = allUsersList.filter(u => u && u.role !== 'admin');
+
+  cachedAllStudents = studentsOnly;
+  cachedAllStudentsTime = now;
+  return studentsOnly;
+}
+
+async function loadAllStudents(forceRefresh = false){
+  return await syncAllStudentsFromFirebase(forceRefresh);
+}
+
+async function manualAdminSyncStudents() {
+  const syncBtn = document.getElementById('btn-admin-sync-firebase');
+  const syncIcon = document.getElementById('admin-sync-icon');
+  if (syncBtn) syncBtn.disabled = true;
+  if (syncIcon) syncIcon.style.animation = 'spin 1s linear infinite';
+
+  try {
+    toast('Syncing all registered students from Firebase & Firestore...');
+    invalidateStudentsCache();
+    const students = await loadAllStudents(true);
+    await renderAdminStudents();
+    toast(`Sync complete! ${students.length} registered learners synced. 🟢`);
+  } catch (err) {
+    console.error('Manual sync error:', err);
+    toast('Sync completed with warnings. Check logs.');
+  } finally {
+    if (syncBtn) syncBtn.disabled = false;
+    if (syncIcon) syncIcon.style.animation = 'none';
+  }
 }
 
 async function loadStudentFullData(email){
@@ -7813,23 +8154,51 @@ async function renderAdminStudents(){
   const container = document.getElementById('admin-students-list');
   if (!container) return;
 
-  const students = await loadAllStudents();
+  // Show clean loading state if empty
+  if (!container.innerHTML.trim()) {
+    container.innerHTML = `
+      <div style="padding:48px 24px;text-align:center;color:var(--text-2);">
+        <div style="font-size:28px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block;">🔄</div>
+        <p style="font-size:15px;font-weight:600;margin-bottom:4px;color:var(--text-1);">Synchronizing registered students from Firebase…</p>
+        <span style="font-size:12.5px;">Reconciling Firebase Auth accounts and Firestore student profiles.</span>
+      </div>`;
+  }
+
+  let students = [];
+  try {
+    students = await loadAllStudents();
+  } catch (err) {
+    console.error('[Admin Students Load Error]', err);
+    container.innerHTML = `
+      <div style="padding:36px;text-align:center;color:var(--text-2);background:var(--bg-card);border-radius:14px;border:1px solid var(--border);">
+        <p style="font-size:16px;font-weight:700;color:#dc2626;margin-bottom:6px;">Failed to load students</p>
+        <span style="font-size:13px;display:block;margin-bottom:14px;">A network or database error occurred while fetching student profiles.</span>
+        <button class="btn btn-primary btn-sm" onclick="manualAdminSyncStudents()">🔄 Retry Firebase Sync</button>
+      </div>`;
+    return;
+  }
+
   if(!students || !students.length){
     container.innerHTML = `
-      <div style="padding:32px;text-align:center;color:var(--text-2);">
-        <p style="font-size:16px;font-weight:600;margin-bottom:6px;">No registered students found</p>
-        <span style="font-size:13px;">Registered learners will automatically appear in this directory.</span>
+      <div style="padding:48px 24px;text-align:center;color:var(--text-2);background:var(--bg-card);border-radius:16px;border:1px solid var(--border);">
+        <div style="font-size:32px;margin-bottom:10px;">👥</div>
+        <p style="font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:6px;">No registered learners found yet</p>
+        <span style="font-size:13px;display:block;margin-bottom:16px;max-width:440px;margin-left:auto;margin-right:auto;">
+          When new learners register via Email or Google Sign-In, their Firebase Authentication UID and student profiles will automatically appear here.
+        </span>
+        <button class="btn btn-outline btn-sm" onclick="manualAdminSyncStudents()">🔄 Refresh from Firebase</button>
       </div>`;
     return;
   }
 
   // Filter students based on search query and status/method filters
   let filtered = students.filter(s => {
-    const q = (adminStudentsSearchQuery || '').toLowerCase();
+    const q = (adminStudentsSearchQuery || '').toLowerCase().trim();
     const nameMatch = (s.name || '').toLowerCase().includes(q);
     const emailMatch = (s.email || '').toLowerCase().includes(q);
     const phoneMatch = (s.phone || '').toLowerCase().includes(q);
-    const matchesQuery = nameMatch || emailMatch || phoneMatch;
+    const uidMatch = (s.uid || '').toLowerCase().includes(q);
+    const matchesQuery = !q || nameMatch || emailMatch || phoneMatch || uidMatch;
 
     const isSuspended = s.status === 'suspended';
     let matchesStatus = true;
@@ -7844,31 +8213,41 @@ async function renderAdminStudents(){
     return matchesQuery && matchesStatus && matchesMethod;
   });
 
+  const activeCount = students.filter(s => s.status !== 'suspended').length;
+  const suspendedCount = students.filter(s => s.status === 'suspended').length;
+  const googleCount = students.filter(s => s.authMethod === 'google' || (s.photoUrl && s.photoUrl.includes('google'))).length;
+  const emailCount = students.length - googleCount;
+
   let html = `
     <div style="margin-bottom:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:var(--bg-app);padding:14px;border-radius:14px;border:1px solid var(--border);">
       <div style="display:flex;gap:10px;flex:1;min-width:260px;align-items:center;">
-        <input type="text" id="admin-student-search-input" placeholder="🔍 Search by name, email, or WhatsApp..." value="${escapeHtml(adminStudentsSearchQuery)}" oninput="adminStudentsSearchQuery = this.value; renderAdminStudents();" class="form-select" style="flex:1;padding:9px 13px;font-size:13.5px;">
+        <input type="text" id="admin-student-search-input" placeholder="🔍 Search by name, email, WhatsApp, or UID..." value="${escapeHtml(adminStudentsSearchQuery)}" oninput="adminStudentsSearchQuery = this.value; renderAdminStudents();" class="form-select" style="flex:1;padding:9px 13px;font-size:13.5px;">
+        ${adminStudentsSearchQuery ? `<button class="btn btn-outline btn-sm" onclick="adminStudentsSearchQuery=''; document.getElementById('admin-student-search-input').value=''; renderAdminStudents();">Clear</button>` : ''}
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <select class="form-select" style="width:auto;font-size:13px;padding:8px 12px;" onchange="adminStudentsFilterStatus = this.value; renderAdminStudents();">
-          <option value="all" ${adminStudentsFilterStatus==='all'?'selected':''}>All Statuses</option>
-          <option value="active" ${adminStudentsFilterStatus==='active'?'selected':''}>Active Only 🟢</option>
-          <option value="suspended" ${adminStudentsFilterStatus==='suspended'?'selected':''}>Suspended Only 🔴</option>
+          <option value="all" ${adminStudentsFilterStatus==='all'?'selected':''}>All Statuses (${students.length})</option>
+          <option value="active" ${adminStudentsFilterStatus==='active'?'selected':''}>Active Only 🟢 (${activeCount})</option>
+          <option value="suspended" ${adminStudentsFilterStatus==='suspended'?'selected':''}>Suspended Only 🔴 (${suspendedCount})</option>
         </select>
         <select class="form-select" style="width:auto;font-size:13px;padding:8px 12px;" onchange="adminStudentsFilterMethod = this.value; renderAdminStudents();">
-          <option value="all" ${adminStudentsFilterMethod==='all'?'selected':''}>All Auth Methods</option>
-          <option value="google" ${adminStudentsFilterMethod==='google'?'selected':''}>Google Sign-In 🌐</option>
-          <option value="email" ${adminStudentsFilterMethod==='email'?'selected':''}>Email / Password ✉️</option>
+          <option value="all" ${adminStudentsFilterMethod==='all'?'selected':''}>All Auth Methods (${students.length})</option>
+          <option value="google" ${adminStudentsFilterMethod==='google'?'selected':''}>Google Sign-In 🌐 (${googleCount})</option>
+          <option value="email" ${adminStudentsFilterMethod==='email'?'selected':''}>Email / Password ✉️ (${emailCount})</option>
         </select>
-        <span style="font-size:12.5px;color:var(--text-2);font-weight:700;">Showing ${filtered.length} of ${students.length}</span>
+        <span style="font-size:12.5px;color:var(--text-2);font-weight:700;white-space:nowrap;">Showing ${filtered.length} of ${students.length}</span>
       </div>
     </div>
   `;
 
   if(!filtered.length){
     html += `
-      <div style="padding:28px;text-align:center;color:var(--text-2);background:var(--bg-app);border-radius:12px;">
-        No registered students match your filter criteria.
+      <div style="padding:36px;text-align:center;color:var(--text-2);background:var(--bg-app);border-radius:14px;border:1px dashed var(--border);">
+        <p style="font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text-1);">No students matched your search</p>
+        <span style="font-size:13px;">Try clearing filters or search terms.</span>
+        <div style="margin-top:12px;">
+          <button class="btn btn-outline btn-sm" onclick="adminStudentsSearchQuery=''; adminStudentsFilterStatus='all'; adminStudentsFilterMethod='all'; renderAdminStudents();">Reset Filters</button>
+        </div>
       </div>`;
     container.innerHTML = html;
     return;
@@ -7881,6 +8260,7 @@ async function renderAdminStudents(){
     const isGoogle = s.authMethod === 'google' || (s.photoUrl && s.photoUrl.includes('google'));
     const isSuspended = s.status === 'suspended';
     const isOnline = data.streak && data.streak.lastActiveDate === new Date().toISOString().slice(0,10);
+    const uidDisplay = s.uid ? (s.uid.length > 14 ? `${s.uid.slice(0, 10)}…${s.uid.slice(-4)}` : s.uid) : 'Linked';
 
     rows.push(`
       <div class="card" style="margin-bottom:12px;padding:16px;border-radius:14px;border:1px solid ${isSuspended?'#fca5a5':'var(--border)'};background:${isSuspended?'#fff5f5':'var(--bg-card)'};transition:all .15s ease;">
@@ -7889,7 +8269,7 @@ async function renderAdminStudents(){
           <div style="display:flex;align-items:center;gap:14px;min-width:280px;flex:1;">
             <div style="position:relative;flex-shrink:0;">
               ${typeof renderUserAvatar === 'function' ? renderUserAvatar(s, 48) : `<div class="avatar" style="width:48px;height:48px;font-size:16px;">${initials(s.name)}</div>`}
-              <span style="position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:99px;background:${isOnline?'#22c55e':'#94a3b8'};border:2px solid #fff;" title="${isOnline?'Online':'Offline'}"></span>
+              <span style="position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:99px;background:${isOnline?'#22c55e':'#94a3b8'};border:2px solid #fff;" title="${isOnline?'Online Today':'Offline'}"></span>
             </div>
 
             <div>
@@ -7897,11 +8277,12 @@ async function renderAdminStudents(){
                 <b style="font-size:15px;color:var(--text-1);">${escapeHtml(s.name)}</b>
                 ${isSuspended ? `<span class="badge" style="background:#fee2e2;color:#dc2626;font-size:10.5px;font-weight:800;">SUSPENDED</span>` : `<span class="badge" style="background:#dcfce7;color:#16a34a;font-size:10.5px;font-weight:800;">ACTIVE</span>`}
                 <span class="badge" style="background:${isGoogle?'#e0f2fe':'#f1f5f9'};color:${isGoogle?'#0369a1':'#475569'};font-size:10.5px;font-weight:700;">
-                  ${isGoogle ? '🌐 Google Sign-In' : '✉️ Email/Password'}
+                  ${isGoogle ? '🌐 Google' : '✉️ Email'}
                 </span>
+                ${s.uid ? `<span class="badge" style="background:#f8fafc;color:#64748b;font-size:10px;font-family:monospace;cursor:pointer;" onclick="copyTextToClipboard('${s.uid}', 'Student UID')" title="Click to copy Firebase UID: ${s.uid}">🆔 ${uidDisplay}</span>` : ''}
               </div>
               <div style="font-size:12.5px;color:var(--text-2);margin-top:2px;">
-                📧 ${escapeHtml(s.email)} ${s.phone ? `• 💬 ${escapeHtml(s.phone)}` : ''}
+                📧 ${escapeHtml(s.email)} ${s.phone ? `• 💬 <a href="https://wa.me/${cleanPhoneForWa(s.phone).replace('+','')}" target="_blank" style="color:var(--accent);text-decoration:underline;">${escapeHtml(s.phone)}</a>` : ''}
               </div>
               <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;">
                 📅 Joined: ${s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : 'N/A'} • 🎂 DOB: ${formatDateOfBirth(s.dob)}
@@ -7917,7 +8298,7 @@ async function renderAdminStudents(){
 
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <button class="btn btn-primary btn-sm" style="font-size:12.5px;padding:8px 13px;border-radius:10px;font-weight:700;" onclick="openAdminStudentDetailsModal('${s.email}')">
-                📋 View Complete Details
+                📋 View Details
               </button>
               <button class="btn btn-outline btn-sm" style="font-size:12.5px;padding:8px 11px;border-radius:10px;" onclick="openAdminEditStudentModal('${s.email}')">
                 ✏️ Edit
@@ -7944,7 +8325,7 @@ async function openAdminStudentDetailsModal(email) {
     return;
   }
 
-  const s = await dbGet('users:' + email, true);
+  const s = (await dbGet('users:' + email, true)) || (cachedAllStudents && cachedAllStudents.find(x => x.email === email));
   if (!s) {
     toast('Student profile not found in database.');
     return;
@@ -8084,11 +8465,11 @@ async function openAdminStudentDetailsModal(email) {
         </div>
       </div>
 
-      <!-- 2. AUTHENTICATION DETAILS -->
+      <!-- 2. AUTHENTICATION & SECURITY DETAILS -->
       <div class="card" style="padding:20px;border-radius:16px;border:1px solid var(--border);">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px;">
           <span style="font-size:20px;">🔐</span>
-          <b style="font-size:16px;color:var(--text-1);">AUTHENTICATION DETAILS</b>
+          <b style="font-size:16px;color:var(--text-1);">AUTHENTICATION & SECURITY DETAILS</b>
         </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;font-size:13px;">
@@ -8097,12 +8478,19 @@ async function openAdminStudentDetailsModal(email) {
             <b style="color:var(--text-1);font-size:14px;">${isGoogle ? '🌐 Google Sign-In' : '✉️ Email/Password'}</b>
           </div>
           <div>
+            <span style="color:var(--text-2);display:block;font-size:11.5px;font-weight:700;">FIREBASE AUTH UID</span>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+              <code style="font-size:12px;background:var(--bg-app);padding:4px 8px;border-radius:6px;border:1px solid var(--border);word-break:break-all;">${s.uid || 'Linked via Auth Session'}</code>
+              ${s.uid ? `<button class="btn btn-outline btn-sm" style="padding:3px 8px;font-size:11px;" onclick="copyTextToClipboard('${s.uid}', 'Firebase UID')">Copy</button>` : ''}
+            </div>
+          </div>
+          <div>
             <span style="color:var(--text-2);display:block;font-size:11.5px;font-weight:700;">EMAIL VERIFICATION STATUS</span>
             <span class="badge" style="background:#dcfce7;color:#16a34a;font-weight:700;font-size:12px;">Verified 🟢</span>
           </div>
           <div>
             <span style="color:var(--text-2);display:block;font-size:11.5px;font-weight:700;">PASSWORD PROTECTION</span>
-            <span class="badge" style="background:#f1f5f9;color:#475569;font-weight:700;font-size:12px;">🔒 Encrypted & Hidden (Never Plaintext)</span>
+            <span class="badge" style="background:#f1f5f9;color:#475569;font-weight:700;font-size:12px;">🔒 Encrypted & Hidden (Firebase Auth)</span>
           </div>
           <div>
             <span style="color:var(--text-2);display:block;font-size:11.5px;font-weight:700;">ACCOUNT CREATION DATE</span>
@@ -8331,6 +8719,8 @@ async function saveAdminStudentEdit() {
   userRecord.updatedAt = new Date().toISOString();
 
   await dbSet('users:' + email, userRecord, true);
+  await addToUserIndex(userRecord);
+  invalidateStudentsCache();
 
   closeAdminEditStudentModal();
   toast('Student profile record updated successfully! ✨');
@@ -8351,6 +8741,9 @@ async function toggleStudentAccountStatus(email) {
   s.updatedAt = new Date().toISOString();
 
   await dbSet('users:' + email, s, true);
+  await addToUserIndex(s);
+  invalidateStudentsCache();
+
   toast(`Student ${s.name} account is now ${newStatus.toUpperCase()}`);
   renderAdminStudents();
 }
@@ -9743,14 +10136,24 @@ async function exportStudentsCSV(){
   for(const s of students){
     const data = await loadStudentFullData(s.email);
     const pct = studentOverallPct(data.progress);
+    const isGoogle = s.authMethod === 'google' || (s.photoUrl && s.photoUrl.includes('google'));
     rows.push([
-      s.name, s.email, new Date(s.createdAt).toLocaleDateString(),
-      pct + '%', data.streak.count || 0, Object.keys(data.certificates).length
+      s.uid || 'N/A',
+      s.name,
+      s.email,
+      s.phone || 'N/A',
+      formatDateOfBirth(s.dob),
+      isGoogle ? 'Google Sign-In' : 'Email/Password',
+      s.status === 'suspended' ? 'Suspended' : 'Active',
+      s.createdAt ? new Date(s.createdAt).toLocaleDateString() : 'N/A',
+      pct + '%',
+      data.streak.count || 0,
+      Object.keys(data.certificates || {}).length
     ]);
   }
   downloadCSV('clariq-students.csv',
-    ['Name','Email','Joined','Overall Progress','Streak (days)','Certificates Earned'], rows);
-  toast('Students CSV downloaded');
+    ['Firebase UID','Full Name','Email Address','WhatsApp Phone','Date of Birth','Auth Provider','Account Status','Joined Date','Overall Progress','Streak (days)','Certificates Earned'], rows);
+  toast('Students CSV downloaded! 📊');
 }
 
 async function exportAttendanceCSV(){
